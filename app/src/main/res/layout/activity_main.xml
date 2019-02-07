@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/button_connectToSpotifyApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="connect"
+        android:text="Se connecter à Spotify" />
+
+    <TextView
+        android:id="@+id/text_currentlyPlayingMusic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No currently playing music" />
+
+    <TextView
+        android:id="@+id/text_currentlyPlayingTrack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+
+    <TextView
+        android:id="@+id/text_currentlyPlayingArtist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/text_currentlyPlayingAlbum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+</LinearLayout>
