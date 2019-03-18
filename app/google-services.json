@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "812152715017",
+    "firebase_url": "https://musishare-2019.firebaseio.com",
+    "project_id": "musishare-2019",
+    "storage_bucket": "musishare-2019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812152715017:android:ee71682167a29e1d",
+        "android_client_info": {
+          "package_name": "fr.nashani.musishare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812152715017-5kdmlkhc9qg0evqfu41vs7vv5djd8ulj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.nashani.musishare",
+            "certificate_hash": "a3b484c92de5ae81aaa898dbf209f06d3944e14d"
+          }
+        },
+        {
+          "client_id": "812152715017-gl9p3058lahhtuikng5ld91qge9ef8ba.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiaU0LoN1m0T9NpRDlPMzT5kNZLALMbzg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812152715017-gl9p3058lahhtuikng5ld91qge9ef8ba.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
