@@ -36,9 +36,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         al = new ArrayList<>();
         al.add("php");
         al.add("c");
