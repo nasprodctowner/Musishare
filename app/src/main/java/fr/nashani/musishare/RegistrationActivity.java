@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,12 +16,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegistrationActivity extends AppCompatActivity {
 
-    private Button mLogin;
+    private Button mRegister;
     private EditText mEmail, mPassword;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
+
 
     @Override
     protected void onStart() {
@@ -37,32 +39,32 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_registration);
 
         mAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = firebaseAuth -> {
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user != null){
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                Intent intent = new Intent(RegistrationActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();
                 return;
             }
         };
 
-        mLogin = findViewById(R.id.button_submit_login);
-        mEmail = findViewById(R.id.text_email_login);
-        mPassword = findViewById(R.id.text_password_login);
+        mRegister = findViewById(R.id.button_submit_registration);
+        mEmail = findViewById(R.id.text_email);
+        mPassword = findViewById(R.id.text_password );
 
-        mLogin.setOnClickListener(v -> {
-            final String email = mEmail.getText().toString();
-            final String password = mPassword.getText().toString();
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(LoginActivity .this, task -> {
-                if(!task.isSuccessful()){
-                    Toast.makeText(LoginActivity.this,"signin error",Toast.LENGTH_SHORT).show();
-                }
-            });
+        mRegister.setOnClickListener(v -> {
+                final String email = mEmail.getText().toString();
+                final String password = mPassword.getText().toString();
+                mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegistrationActivity.this, task -> {
+                    if(!task.isSuccessful()) Toast.makeText(RegistrationActivity.this,"signup error",Toast.LENGTH_SHORT);
+                });
 
         });
+
+
     }
 }
