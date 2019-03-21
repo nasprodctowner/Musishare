@@ -35,14 +35,13 @@ public class MainActivity extends Activity {
     private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1"; //past your client ID
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
-
-    // private ArrayList<String> al;
     private Cards cards_data[];
-    // private ArrayAdapter<String> arrayAdapter;
     private arrayAdapter arrayAdapter;
     ListView listView;
     List<Cards> rowItems;
 
+    private String currentUId;
+    private DatabaseReference usersDb;
 
     private FirebaseAuth mAuth;
 
@@ -51,7 +50,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
+
         mAuth = FirebaseAuth.getInstance();
+        currentUId = mAuth.getCurrentUser().getUid();
         checkUserSex();
 
         // al = new ArrayList<>();
@@ -77,11 +79,21 @@ public class MainActivity extends Activity {
                 //Do something on the left!
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
+                Cards obj = (Cards) dataObject;
+                String userId = obj.getUserId();
+                String name = obj.getName();
+
+                usersDb.child(oppositeUserSex).child(userId).child("connections").child("nop").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
+                Cards obj = (Cards) dataObject;
+                String userId = obj.getUserId();
+                String name = obj.getName();
+
+                usersDb.child(oppositeUserSex).child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Right!",Toast.LENGTH_SHORT).show();
             }
 
@@ -239,7 +251,9 @@ public class MainActivity extends Activity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                if(dataSnapshot.exists()){
+                if(dataSnapshot.exists()
+                        && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                        && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)){
                     Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
                     rowItems.add(item);
                     arrayAdapter.notifyDataSetChanged();
