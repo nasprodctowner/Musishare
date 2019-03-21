@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,7 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -35,8 +36,12 @@ public class MainActivity extends Activity {
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
 
-    private ArrayList<String> al;
-    private ArrayAdapter<String> arrayAdapter;
+    // private ArrayList<String> al;
+    private Cards cards_data[];
+    // private ArrayAdapter<String> arrayAdapter;
+    private arrayAdapter arrayAdapter;
+    ListView listView;
+    List<Cards> rowItems;
 
 
     private FirebaseAuth mAuth;
@@ -49,9 +54,11 @@ public class MainActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
         checkUserSex();
 
-        al = new ArrayList<>();
+        // al = new ArrayList<>();
+        rowItems = new ArrayList<Cards>();
 
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
+        //arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
+        arrayAdapter = new arrayAdapter(this, R.layout.item, rowItems );
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
@@ -61,7 +68,7 @@ public class MainActivity extends Activity {
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
-                al.remove(0);
+                rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -233,7 +240,8 @@ public class MainActivity extends Activity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 if(dataSnapshot.exists()){
-                    al.add(dataSnapshot.child("name").getValue().toString() );
+                    Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
+                    rowItems.add(item);
                     arrayAdapter.notifyDataSetChanged();
                 }
             }
