@@ -12,7 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="connect"
-        android:text="Se connecter à Spotify" />
+        android:text="Connect to Spotify" />
+
+    <Button
+        android:id="@+id/button_logOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="logOutUser"
+        android:text="Logout"
+        />
 
     <TextView
         android:id="@+id/text_currentlyPlayingMusic"

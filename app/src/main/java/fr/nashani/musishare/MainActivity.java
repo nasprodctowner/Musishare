@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity {
     private ArrayAdapter<String> arrayAdapter;
     private int i;
 
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +118,8 @@ public class MainActivity extends Activity {
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
                         Log.d("MainActivity", "Connected! Yay!");
-                        Button button_connectToSpotifyApp = (Button)findViewById(R.id.button_connectToSpotifyApp);
-                        button_connectToSpotifyApp.setText("Connecté");
-                        button_connectToSpotifyApp.setEnabled(false);
+                        Button button_connectToSpotifyApp = findViewById(R.id.button_connectToSpotifyApp);
+                        button_connectToSpotifyApp.setVisibility(View.GONE);
                         // Now you can start interacting with App Remote
                         connected();
 
@@ -164,5 +165,12 @@ public class MainActivity extends Activity {
     public void connect(View view) {
         Intent intent = new Intent(this, SpotifyLoginActivity.class);
         startActivity(intent);
+    }
+
+    public void logOutUser(View view) {
+        mAuth.signOut();
+        Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
