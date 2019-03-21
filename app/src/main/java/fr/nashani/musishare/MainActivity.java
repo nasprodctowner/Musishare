@@ -3,6 +3,8 @@ package fr.nashani.musishare;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -10,6 +12,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -28,23 +37,19 @@ public class MainActivity extends Activity {
 
     private ArrayList<String> al;
     private ArrayAdapter<String> arrayAdapter;
-    private int i;
 
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
+        checkUserSex();
+
         al = new ArrayList<>();
-        al.add("php");
-        al.add("c");
-        al.add("python");
-        al.add("java");
-        al.add("html");
-        al.add("c++");
-        al.add("css");
-        al.add("javascript");
 
         arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
 
@@ -75,11 +80,6 @@ public class MainActivity extends Activity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-                al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
-                Log.d("LIST", "notified");
-                i++;
             }
 
             @Override
@@ -116,9 +116,8 @@ public class MainActivity extends Activity {
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
                         Log.d("MainActivity", "Connected! Yay!");
-                        Button button_connectToSpotifyApp = (Button)findViewById(R.id.button_connectToSpotifyApp);
-                        button_connectToSpotifyApp.setText("Connecté");
-                        button_connectToSpotifyApp.setEnabled(false);
+                        Button button_connectToSpotifyApp = findViewById(R.id.button_connectToSpotifyApp);
+                        button_connectToSpotifyApp.setVisibility(View.GONE);
                         // Now you can start interacting with App Remote
                         connected();
 
@@ -164,5 +163,101 @@ public class MainActivity extends Activity {
     public void connect(View view) {
         Intent intent = new Intent(this, SpotifyLoginActivity.class);
         startActivity(intent);
+    }
+
+
+    private String userSex;
+    private String oppositeUserSex;
+
+    public void checkUserSex(){
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference maleDB = FirebaseDatabase.getInstance().getReference().child("Users").child("Male");
+        maleDB.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.getKey().equals(user.getUid())){
+                    userSex = "Male";
+                    oppositeUserSex = "Female";
+                    getOppositeSexUsers();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        DatabaseReference femaleDB = FirebaseDatabase.getInstance().getReference().child("Users").child("Female");
+        femaleDB.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.getKey().equals(user.getUid())){
+                    userSex = "Female";
+                    oppositeUserSex  = "Male";
+                    getOppositeSexUsers();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    public void getOppositeSexUsers(){
+        DatabaseReference oppositeSexDB = FirebaseDatabase.getInstance().getReference().child("Users").child(oppositeUserSex);
+        oppositeSexDB.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.exists()){
+                    al.add(dataSnapshot.child("name").getValue().toString() );
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+
+    public void logOutUser(View view) {
+        mAuth.signOut();
+        Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
