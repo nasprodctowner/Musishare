@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
                 String userId = obj.getUserId();
                 String name = obj.getName();
 
-                usersDb.child(oppositeUserSex).child(userId).child("connections").child("nop").child(currentUId).setValue(true);
+                usersDb.child(oppositeUserSex).child(userId).child("connections").child("nope").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
             }
 
@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
                     //saving match to data base
                     usersDb.child(oppositeUserSex).child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).setValue(true);
-                    usersDb.child(userSex).child(dataSnapshot.getKey()).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+                    usersDb.child(userSex).child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
                 }
             }
 
