@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,7 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -34,10 +35,13 @@ public class MainActivity extends Activity {
     private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1"; //past your client ID
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
+    private Cards cards_data[];
+    private arrayAdapter arrayAdapter;
+    ListView listView;
+    List<Cards> rowItems;
 
-    private ArrayList<String> al;
-    private ArrayAdapter<String> arrayAdapter;
-
+    private String currentUId;
+    private DatabaseReference usersDb;
 
     private FirebaseAuth mAuth;
 
@@ -46,12 +50,17 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
+
         mAuth = FirebaseAuth.getInstance();
+        currentUId = mAuth.getCurrentUser().getUid();
         checkUserSex();
 
-        al = new ArrayList<>();
+        // al = new ArrayList<>();
+        rowItems = new ArrayList<Cards>();
 
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
+        //arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
+        arrayAdapter = new arrayAdapter(this, R.layout.item, rowItems );
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
@@ -61,7 +70,7 @@ public class MainActivity extends Activity {
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
-                al.remove(0);
+                rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -70,11 +79,21 @@ public class MainActivity extends Activity {
                 //Do something on the left!
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
+                Cards obj = (Cards) dataObject;
+                String userId = obj.getUserId();
+                String name = obj.getName();
+
+                usersDb.child(oppositeUserSex).child(userId).child("connections").child("nop").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
+                Cards obj = (Cards) dataObject;
+                String userId = obj.getUserId();
+                String name = obj.getName();
+
+                usersDb.child(oppositeUserSex).child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Right!",Toast.LENGTH_SHORT).show();
             }
 
@@ -232,8 +251,11 @@ public class MainActivity extends Activity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                if(dataSnapshot.exists()){
-                    al.add(dataSnapshot.child("name").getValue().toString() );
+                if(dataSnapshot.exists()
+                        && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                        && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)){
+                    Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
+                    rowItems.add(item);
                     arrayAdapter.notifyDataSetChanged();
                 }
             }
