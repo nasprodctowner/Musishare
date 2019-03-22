@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
     private Cards cards_data[];
-    private arrayAdapter arrayAdapter;
+    private CardsAdapter CardsAdapter;
     ListView listView;
     List<Cards> rowItems;
 
@@ -59,19 +59,19 @@ public class MainActivity extends Activity {
         // al = new ArrayList<>();
         rowItems = new ArrayList<Cards>();
 
-        //arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
-        arrayAdapter = new arrayAdapter(this, R.layout.item, rowItems );
+        //CardsAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
+        CardsAdapter = new CardsAdapter(this, R.layout.item, rowItems );
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
-        flingContainer.setAdapter(arrayAdapter);
+        flingContainer.setAdapter(CardsAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
-                arrayAdapter.notifyDataSetChanged();
+                CardsAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -94,6 +94,7 @@ public class MainActivity extends Activity {
                 String name = obj.getName();
 
                 usersDb.child(oppositeUserSex).child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
+                isConnectionMatch(userId);
                 Toast.makeText(MainActivity.this, "Right!",Toast.LENGTH_SHORT).show();
             }
 
@@ -113,6 +114,27 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
                 Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void isConnectionMatch(String userId) {
+        DatabaseReference currentUserConnectionsDb = usersDb.child(userSex).child(currentUId).child("connections").child("yeps").child(userId);
+        currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
+                    //saving match to data base
+                    usersDb.child(oppositeUserSex).child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).setValue(true);
+                    usersDb.child(userSex).child(dataSnapshot.getKey()).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 
@@ -256,7 +278,7 @@ public class MainActivity extends Activity {
                         && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)){
                     Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
                     rowItems.add(item);
-                    arrayAdapter.notifyDataSetChanged();
+                    CardsAdapter.notifyDataSetChanged();
                 }
             }
 
