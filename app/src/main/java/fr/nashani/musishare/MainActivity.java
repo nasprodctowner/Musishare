@@ -3,6 +3,7 @@ package fr.nashani.musishare;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -303,5 +304,13 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
         startActivity(intent);
         finish();
+        return;
+    }
+
+    public void goToProfile(View view) {
+        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+        intent.putExtra("userSex",userSex);
+        startActivity(intent);
+        return;
     }
 }
