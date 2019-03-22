@@ -92,11 +92,23 @@ public class ProfileActivity extends AppCompatActivity {
                         name = map.get("phone").toString();
                         mPhoneField.setText(name);
                     }
+
+
                     if (map.get("profileImageUrl") != null){
                         profileImageURL = map.get("profileImageUrl").toString();
 
+                        switch (profileImageURL){
+                            case "default" : mProfileImage.setImageResource(R.drawable.ic_person_black_24dp);
+
+                                break;
+
+                            default: Glide.with(getApplication()).load(profileImageURL).into(mProfileImage);
+                                break;
+
+                        }
+
                         //URL TO IMAGE
-                        Glide.with(getApplication()).load(profileImageURL).into(mProfileImage);
+
                     }
                 }
             }

@@ -277,9 +277,22 @@ public class MainActivity extends Activity {
                 if(dataSnapshot.exists()
                         && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
                         && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)){
-                    Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
-                    rowItems.add(item);
-                    CardsAdapter.notifyDataSetChanged();
+
+
+                    String profileImageUrl = "default";
+                    dataSnapshot.child("profileImageUrl").getValue();
+
+                    if(dataSnapshot.child("profileImageUrl").getValue() != null)
+                    if(!dataSnapshot.child("profileImageUrl").getValue().equals("default")){
+                        profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                    }
+
+                    if(dataSnapshot.child("name").getValue() != null){
+                        Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(),profileImageUrl);
+                        rowItems.add(item);
+                        CardsAdapter.notifyDataSetChanged();
+                    }
+
                 }
             }
 
