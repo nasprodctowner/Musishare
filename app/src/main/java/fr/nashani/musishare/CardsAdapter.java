@@ -24,10 +24,12 @@ public class CardsAdapter extends ArrayAdapter<Cards> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent , false);
         }
         TextView name = (TextView) convertView.findViewById(R.id.userName);
-        ImageView image = (ImageView) convertView.findViewById(R.id.userImage);
+        ImageView userImage = (ImageView) convertView.findViewById(R.id.userImage);
+        ImageView albumImage = (ImageView) convertView.findViewById(R.id.imageAlbum);
 
         name.setText(cardItem.getName());
-        image.setImageResource(R.mipmap.ic_launcher);
+        userImage.setImageResource(R.mipmap.ic_launcher);
+        albumImage.setImageResource(R.mipmap.ic_launcher);
 
         return convertView;
     }
