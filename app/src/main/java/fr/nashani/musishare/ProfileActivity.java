@@ -40,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth ;
     private DatabaseReference userDB;
 
-    private String userId, name, phone, profileImageURL;
+    private String userId, name, phone, profileImageURL, userSex;
 
     private Uri resultUri;
 
@@ -52,12 +52,11 @@ public class ProfileActivity extends AppCompatActivity {
         mNameField = findViewById(R.id.userProfileName);
         mPhoneField = findViewById(R.id.userProfilePhone);
         mProfileImage = findViewById(R.id.userProfileImage);
-        String userSex = getIntent().getExtras().getString("userSex");
         mBack = findViewById(R.id.profile_back);
         mConfirm = findViewById(R.id.profile_confirm);
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userSex).child(userId);
+        userDB = FirebaseDatabase.getInstance().getReference().child("Users") .child(userId);
 
         getUserInfo();
         mProfileImage.setOnClickListener(v -> {
@@ -93,6 +92,9 @@ public class ProfileActivity extends AppCompatActivity {
                         mPhoneField.setText(name);
                     }
 
+                    if (map.get("sex") != null){
+                        userSex = map.get("sex").toString();
+                    }
 
                     if (map.get("profileImageUrl") != null){
                         profileImageURL = map.get("profileImageUrl").toString();
