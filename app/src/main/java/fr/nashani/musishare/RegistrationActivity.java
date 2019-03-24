@@ -1,26 +1,21 @@
 package fr.nashani.musishare;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -85,15 +80,20 @@ public class RegistrationActivity extends AppCompatActivity {
             System.out.println(sexe);
                 mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegistrationActivity.this, task -> {
                     if(!task.isSuccessful()) {
-                        Toast.makeText(RegistrationActivity.this,"signup error",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegistrationActivity.this,"Signup error",Toast.LENGTH_SHORT).show();
                     }else {
 
                         String userId = mAuth.getCurrentUser().getUid() ;
 
-                        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(sexe).child(userId).child("name");
+                        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(sexe).child(userId);
 
+                        Map<String, Object> userInformation = new HashMap<>();
+
+                        userInformation.put("name",name);
+                        userInformation.put("profileImageUrl","default");
                         currentUserDB.setValue(name);
 
+                        currentUserDB.updateChildren(userInformation);
                     }
                 });
 

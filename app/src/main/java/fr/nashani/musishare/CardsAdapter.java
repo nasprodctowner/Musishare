@@ -8,6 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class CardsAdapter extends ArrayAdapter<Cards> {
@@ -19,15 +23,29 @@ public class CardsAdapter extends ArrayAdapter<Cards> {
     }
 
     public View getView (int position, View convertView, ViewGroup parent) {
-        Cards cardItem = (Cards) getItem(position);
+        Cards cardItem = getItem(position);
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent , false);
         }
-        TextView name = (TextView) convertView.findViewById(R.id.userName);
-        ImageView image = (ImageView) convertView.findViewById(R.id.userImage);
+        TextView name = convertView.findViewById(R.id.userName);
+        ImageView image = convertView.findViewById(R.id.userImage);
+        TextView trackName = convertView.findViewById(R.id.trackName);
 
         name.setText(cardItem.getName());
-        image.setImageResource(R.mipmap.ic_launcher);
+        trackName.setText(cardItem.getTrackName());
+
+
+        switch (cardItem.getProfileImageUrl()){
+            case "default" : image.setImageResource(R.drawable.ic_person_black_24dp);
+            break;
+
+            default:
+                Glide.with(convertView.getContext()).load(cardItem.getProfileImageUrl()).into(image);
+            break;
+
+        }
+        // Set image
 
         return convertView;
     }

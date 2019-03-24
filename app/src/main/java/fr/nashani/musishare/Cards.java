@@ -3,10 +3,15 @@ package fr.nashani.musishare;
 public class Cards {
     private String userId;
     private String name;
+    private String phone;
+    private String profileImageUrl;
+    private String trackName;
 
-    public Cards(String userId, String name) {
+    public Cards(String userId, String name, String profileImageUrl) {
         this.userId = userId;
         this.name = name;
+        this.profileImageUrl = profileImageUrl;
+
     }
 
     public String getUserId() {
@@ -23,5 +28,21 @@ public class Cards {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
     }
 }

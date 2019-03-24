@@ -7,20 +7,37 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button_connectToSpotifyApp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="connect"
-        android:text="Connect to Spotify" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/button_logOut"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="logOutUser"
-        android:text="Logout"
-        />
+        <Button
+            android:id="@+id/button_connectToSpotifyApp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="connect"
+            android:layout_weight="1"
+            android:text="Spotify" />
+
+        <Button
+            android:id="@+id/button_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="goToProfile"
+            android:layout_weight="1"
+            android:text="Profile" />
+
+        <Button
+            android:id="@+id/button_logOut"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="logOutUser"
+            android:layout_weight="1"
+            android:text="Logout"
+            />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/text_currentlyPlayingMusic"
@@ -49,7 +66,7 @@
 
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
-        android:background="#ffeee9e2"
+        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:rotation_degrees="15.5"
