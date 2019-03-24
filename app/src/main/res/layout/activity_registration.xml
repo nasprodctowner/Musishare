@@ -16,7 +16,7 @@
     <RadioGroup
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-        android:id="@+id/radio_sexe">
+        android:id="@+id/radio_sex">
     <RadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

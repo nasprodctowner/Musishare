@@ -23,7 +23,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText mEmail, mPassword, mName;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
-    private RadioGroup mSexe;
+    private RadioGroup mSex;
 
 
 
@@ -58,17 +58,17 @@ public class RegistrationActivity extends AppCompatActivity {
         mRegister = findViewById(R.id.button_submit_registration);
         mEmail = findViewById(R.id.text_email);
         mPassword = findViewById(R.id.text_password);
-        mSexe =  findViewById(R.id.radio_sexe);
+        mSex =  findViewById(R.id.radio_sex);
         mName =  findViewById(R.id.text_name);
 
 
         mRegister.setOnClickListener(v -> {
 
-            int selectId = mSexe.getCheckedRadioButtonId();
+            int selectId = mSex.getCheckedRadioButtonId();
 
-            final RadioButton mSexeChoice = findViewById(selectId);
+            final RadioButton mSexChoice = findViewById(selectId);
 
-            if(mSexeChoice.getText() == null){
+            if(mSexChoice.getText() == null){
                 return;
             }
 
@@ -76,8 +76,8 @@ public class RegistrationActivity extends AppCompatActivity {
             final String password = mPassword.getText().toString();
             final String name = mName.getText().toString();
 
-            final String sexe = mSexeChoice.getText().toString();
-            System.out.println(sexe);
+            final String sex = mSexChoice.getText().toString();
+
                 mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegistrationActivity.this, task -> {
                     if(!task.isSuccessful()) {
                         Toast.makeText(RegistrationActivity.this,"Signup error",Toast.LENGTH_SHORT).show();
@@ -85,11 +85,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
                         String userId = mAuth.getCurrentUser().getUid() ;
 
-                        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(sexe).child(userId);
+                        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
                         Map<String, Object> userInformation = new HashMap<>();
 
                         userInformation.put("name",name);
+                        userInformation.put("sex", sex);
                         userInformation.put("profileImageUrl","default");
                         currentUserDB.setValue(name);
 
