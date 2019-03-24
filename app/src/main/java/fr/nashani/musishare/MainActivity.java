@@ -28,7 +28,9 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends Activity {
@@ -46,11 +48,20 @@ public class MainActivity extends Activity {
 
     private FirebaseAuth mAuth;
 
+    private DatabaseReference userDB;
+    String userId;
+
+    private String userSex;
+    private String oppositeUserSex;
+
+    private String trackName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //get all users
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
@@ -111,11 +122,9 @@ public class MainActivity extends Activity {
 
 
         // Optionally add an OnItemClickListener
-        flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClicked(int itemPosition, Object dataObject) {
-                Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
-            }
+        flingContainer.setOnItemClickListener((itemPosition, dataObject) -> {
+
+             Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -198,6 +207,10 @@ public class MainActivity extends Activity {
                         text_currentlyPlayingTrack.setText("Track :"+track.name);
                         text_currentlyPlayingArtist.setText("Artist :"+track.artist.name);
                         text_currentlyPlayingAlbum.setText("Album : "+track.album.name);
+
+                        trackName = track.name;
+                        saveTrack(trackName);
+
                     }
                 });
     }
@@ -207,9 +220,6 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-
-    private String userSex;
-    private String oppositeUserSex;
 
     public void checkUserSex(){
 
@@ -269,7 +279,9 @@ public class MainActivity extends Activity {
     }
 
     public void getOppositeSexUsers(){
+
         DatabaseReference oppositeSexDB = FirebaseDatabase.getInstance().getReference().child("Users").child(oppositeUserSex);
+
         oppositeSexDB.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -280,6 +292,8 @@ public class MainActivity extends Activity {
 
 
                     String profileImageUrl = "default";
+                    String currentTrackName = "none";
+
                     dataSnapshot.child("profileImageUrl").getValue();
 
                     if(dataSnapshot.child("profileImageUrl").getValue() != null)
@@ -287,8 +301,16 @@ public class MainActivity extends Activity {
                         profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
                     }
 
+
+                    if(dataSnapshot.child("CurrentTrack").child("trackName").getValue() != null)
+                        if(!dataSnapshot.child("CurrentTrack").child("trackName").getValue().equals("none")){
+                            currentTrackName = dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString();
+                        }
+
                     if(dataSnapshot.child("name").getValue() != null){
                         Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(),profileImageUrl);
+                        System.out.print(trackName);
+                        item.setTrackName(currentTrackName);
                         rowItems.add(item);
                         CardsAdapter.notifyDataSetChanged();
                     }
@@ -311,14 +333,28 @@ public class MainActivity extends Activity {
         });
     }
 
+    public void saveTrack(String currentTrackName){
 
-    public void logOutUser(View view) {
-        mAuth.signOut();
-        Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
-        startActivity(intent);
-        finish();
-        return;
+        String userId = mAuth.getCurrentUser().getUid() ;
+
+        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userSex).child(userId).child("CurrentTrack");
+
+        Map<String, Object> userInformation = new HashMap<>();
+
+        userInformation.put("trackName",currentTrackName);
+        currentUserDB.setValue(currentTrackName);
+
+        currentUserDB.updateChildren(userInformation);
     }
+
+    public void logOutUser (View view){
+            mAuth.signOut();
+            Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
 
     public void goToProfile(View view) {
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);

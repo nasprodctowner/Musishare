@@ -5,12 +5,13 @@ public class Cards {
     private String name;
     private String phone;
     private String profileImageUrl;
-
+    private String trackName;
 
     public Cards(String userId, String name, String profileImageUrl) {
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+
     }
 
     public String getUserId() {
@@ -37,4 +38,11 @@ public class Cards {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
+    }
 }

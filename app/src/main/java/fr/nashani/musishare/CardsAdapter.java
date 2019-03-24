@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class CardsAdapter extends ArrayAdapter<Cards> {
@@ -28,8 +30,10 @@ public class CardsAdapter extends ArrayAdapter<Cards> {
         }
         TextView name = convertView.findViewById(R.id.userName);
         ImageView image = convertView.findViewById(R.id.userImage);
+        TextView trackName = convertView.findViewById(R.id.trackName);
 
         name.setText(cardItem.getName());
+        trackName.setText(cardItem.getTrackName());
 
 
         switch (cardItem.getProfileImageUrl()){
