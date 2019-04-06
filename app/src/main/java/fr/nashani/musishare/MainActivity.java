@@ -31,16 +31,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.nashani.musishare.Cards.Card;
+import fr.nashani.musishare.Cards.CardAdapter;
+import fr.nashani.musishare.Matches.MatchActivity;
+import fr.nashani.musishare.Spotify.SpotifyLoginActivity;
+import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
+import fr.nashani.musishare.User.ProfileActivity;
+
 
 public class MainActivity extends Activity {
 
     private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1"; //past your client ID
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
-    private Cards cards_data[];
-    private CardsAdapter CardsAdapter;
+    private Card card_data[];
+    private CardAdapter CardAdapter;
     ListView listView;
-    List<Cards> rowItems;
+    List<Card> rowItems;
 
     private String currentUId;
     private DatabaseReference usersDB;
@@ -65,21 +72,21 @@ public class MainActivity extends Activity {
         checkUserSex();
 
         // al = new ArrayList<>();
-        rowItems = new ArrayList<Cards>();
+        rowItems = new ArrayList<Card>();
 
-        //CardsAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
-        CardsAdapter = new CardsAdapter(this, R.layout.item, rowItems );
+        //CardAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
+        CardAdapter = new CardAdapter(this, R.layout.item, rowItems );
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
-        flingContainer.setAdapter(CardsAdapter);
+        flingContainer.setAdapter(CardAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
-                CardsAdapter.notifyDataSetChanged();
+                CardAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -87,7 +94,7 @@ public class MainActivity extends Activity {
                 //Do something on the left!
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
-                Cards obj = (Cards) dataObject;
+                Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
                 String name = obj.getName();
 
@@ -97,7 +104,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                Cards obj = (Cards) dataObject;
+                Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
                 String name = obj.getName();
 
@@ -285,11 +292,11 @@ public class MainActivity extends Activity {
                             }
 
                         if(dataSnapshot.child("name").getValue() != null){
-                            Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(),profileImageUrl);
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(),profileImageUrl);
                             System.out.print(trackName);
                             item.setTrackName(currentTrackName);
                             rowItems.add(item);
-                            CardsAdapter.notifyDataSetChanged();
+                            CardAdapter.notifyDataSetChanged();
                         }
 
                     }
@@ -337,6 +344,12 @@ public class MainActivity extends Activity {
 
     public void goToProfile(View view) {
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+        startActivity(intent);
+        return;
+    }
+
+    public void goToMatches(View view) {
+        Intent intent = new Intent(MainActivity.this, MatchActivity.class);
         startActivity(intent);
         return;
     }
