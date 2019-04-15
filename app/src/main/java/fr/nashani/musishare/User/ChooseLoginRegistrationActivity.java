@@ -1,12 +1,13 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.User;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
-public class ChooseLoginRegistrationActivity extends AppCompatActivity {
+import fr.nashani.musishare.R;
+
+public class ChooseLoginRegistrationActivity extends Activity {
 
     Button mLogin, mRegister;
 

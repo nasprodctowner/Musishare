@@ -1,4 +1,4 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.Cards;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,20 +10,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
-public class CardsAdapter extends ArrayAdapter<Cards> {
+import fr.nashani.musishare.R;
+
+public class CardAdapter extends ArrayAdapter<Card> {
 
     Context context;
 
-    public CardsAdapter(Context context , int resource , List<Cards> items) {
+    public CardAdapter(Context context , int resource , List<Card> items) {
         super(context , resource , items);
     }
 
     public View getView (int position, View convertView, ViewGroup parent) {
-        Cards cardItem = getItem(position);
+        Card cardItem = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent , false);

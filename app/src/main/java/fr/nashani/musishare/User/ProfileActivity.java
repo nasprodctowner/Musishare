@@ -1,4 +1,4 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.User;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity {
+import fr.nashani.musishare.R;
+
+public class ProfileActivity extends Activity {
 
     private EditText mNameField, mPhoneField;
     private ImageView mProfileImage;

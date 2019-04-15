@@ -1,7 +1,7 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.User;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +17,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegistrationActivity extends AppCompatActivity {
+import fr.nashani.musishare.MainActivity;
+import fr.nashani.musishare.R;
+
+public class RegistrationActivity extends Activity {
 
     private Button mRegister;
     private EditText mEmail, mPassword, mName;
@@ -48,7 +51,7 @@ public class RegistrationActivity extends AppCompatActivity {
         firebaseAuthStateListener = firebaseAuth -> {
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user != null){
-                Intent intent = new Intent(RegistrationActivity.this,MainActivity.class);
+                Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return;

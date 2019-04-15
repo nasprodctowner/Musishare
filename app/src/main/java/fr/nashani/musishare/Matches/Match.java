@@ -1,17 +1,17 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.Matches;
 
-public class Cards {
+public class Match {
+
     private String userId;
     private String name;
-    private String phone;
     private String profileImageUrl;
     private String trackName;
 
-    public Cards(String userId, String name, String profileImageUrl) {
+    public Match(String userId, String name, String profileImageUrl, String trackName) {
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
-
+        this.trackName = trackName;
     }
 
     public String getUserId() {

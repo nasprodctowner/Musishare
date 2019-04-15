@@ -1,4 +1,4 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.Spotify;
 
 import android.app.Activity;
 import android.content.Intent;
