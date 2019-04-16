@@ -281,6 +281,8 @@ public class MainActivity extends Activity {
 
                         String profileImageUrl = "default";
                         String currentTrackName = "none";
+                        String currentTrackArtist = "none";
+                        String currentTrackAlbum = "none";
 
                         dataSnapshot.child("profileImageUrl").getValue();
 
@@ -293,12 +295,22 @@ public class MainActivity extends Activity {
                         if(dataSnapshot.child("CurrentTrack").child("trackName").getValue() != null)
                             if(!dataSnapshot.child("CurrentTrack").child("trackName").getValue().equals("none")){
                                 currentTrackName = dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString();
+                                currentTrackArtist = dataSnapshot.child("CurrentTrack").child("trackArtist").getValue().toString();
+                                currentTrackAlbum = dataSnapshot.child("CurrentTrack").child("trackAlbum").getValue().toString();
                             }
 
                         if(dataSnapshot.child("name").getValue() != null){
-                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(),profileImageUrl);
+                            Card item = new Card(dataSnapshot.getKey(),
+                                    dataSnapshot.child("name").getValue().toString(),
+                                    dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString(),
+                                    dataSnapshot.child("CurrentTrack").child("trackArtist").getValue().toString(),
+                                    dataSnapshot.child("CurrentTrack").child("trackAlbum").getValue().toString(),
+                                    profileImageUrl);
                             System.out.print(trackName);
+                            // item.setName();
                             item.setTrackName(currentTrackName);
+                            item.setTrackName(currentTrackArtist);
+                            item.setTrackName(currentTrackAlbum);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
