@@ -27,7 +27,16 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import fr.nashani.musishare.Cards.Card;
+import fr.nashani.musishare.Cards.CardAdapter;
+import fr.nashani.musishare.Matches.MatchActivity;
+import fr.nashani.musishare.Spotify.SpotifyLoginActivity;
+import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
+import fr.nashani.musishare.User.ProfileActivity;
 
 
 public class MainActivity extends Activity {
@@ -35,43 +44,51 @@ public class MainActivity extends Activity {
     private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1"; //past your client ID
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
-    private Cards cards_data[];
-    private CardsAdapter CardsAdapter;
+    private Card card_data[];
+    private CardAdapter CardAdapter;
     ListView listView;
-    List<Cards> rowItems;
+    List<Card> rowItems;
 
     private String currentUId;
-    private DatabaseReference usersDb;
+    private DatabaseReference usersDB;
 
     private FirebaseAuth mAuth;
+
+    private String userSex;
+    private String oppositeUserSex;
+
+    private String trackName;
+    private String trackArtist;
+    private String trackAlbum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
+        //get all users
+        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
         checkUserSex();
 
         // al = new ArrayList<>();
-        rowItems = new ArrayList<Cards>();
+        rowItems = new ArrayList<Card>();
 
-        //CardsAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
-        CardsAdapter = new CardsAdapter(this, R.layout.item, rowItems );
+        //CardAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
+        CardAdapter = new CardAdapter(this, R.layout.item, rowItems );
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
-        flingContainer.setAdapter(CardsAdapter);
+        flingContainer.setAdapter(CardAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
-                CardsAdapter.notifyDataSetChanged();
+                CardAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -79,21 +96,21 @@ public class MainActivity extends Activity {
                 //Do something on the left!
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
-                Cards obj = (Cards) dataObject;
+                Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
                 String name = obj.getName();
 
-                usersDb.child(oppositeUserSex).child(userId).child("connections").child("nope").child(currentUId).setValue(true);
+                usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                Cards obj = (Cards) dataObject;
+                Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
                 String name = obj.getName();
 
-                usersDb.child(oppositeUserSex).child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
+                usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
                 isConnectionMatch(userId);
                 Toast.makeText(MainActivity.this, "Right!",Toast.LENGTH_SHORT).show();
             }
@@ -110,25 +127,23 @@ public class MainActivity extends Activity {
 
 
         // Optionally add an OnItemClickListener
-        flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClicked(int itemPosition, Object dataObject) {
-                Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
-            }
+        flingContainer.setOnItemClickListener((itemPosition, dataObject) -> {
+
+             Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
         });
 
     }
 
     private void isConnectionMatch(String userId) {
-        DatabaseReference currentUserConnectionsDb = usersDb.child(userSex).child(currentUId).child("connections").child("yeps").child(userId);
+        DatabaseReference currentUserConnectionsDb = usersDB.child(currentUId).child("connections").child("yeps").child(userId);
         currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
                     //saving match to data base
-                    usersDb.child(oppositeUserSex).child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).setValue(true);
-                    usersDb.child(userSex).child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+                    usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).setValue(true);
+                    usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
                 }
             }
 
@@ -197,6 +212,12 @@ public class MainActivity extends Activity {
                         text_currentlyPlayingTrack.setText("Track :"+track.name);
                         text_currentlyPlayingArtist.setText("Artist :"+track.artist.name);
                         text_currentlyPlayingAlbum.setText("Album : "+track.album.name);
+
+                        trackName = track.name;
+                        trackArtist = track.artist.name;
+                        trackAlbum = track.album.name;
+                        saveTrack(trackName, trackAlbum, trackArtist);
+
                     }
                 });
     }
@@ -207,79 +228,84 @@ public class MainActivity extends Activity {
     }
 
 
-    private String userSex;
-    private String oppositeUserSex;
-
     public void checkUserSex(){
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference maleDB = FirebaseDatabase.getInstance().getReference().child("Users").child("Male");
-        maleDB.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+        DatabaseReference userDB = usersDB.child(user.getUid());
+        userDB.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                if(dataSnapshot.getKey().equals(user.getUid())){
-                    userSex = "Male";
-                    oppositeUserSex = "Female";
-                    getOppositeSexUsers();
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                    if (dataSnapshot.exists()){
+                        if(dataSnapshot.child("sex").getValue() != null){
+                            userSex = dataSnapshot.child("sex").getValue().toString();
+
+                            switch (userSex){
+                                case "Male" : oppositeUserSex = "Female";
+                                    break;
+                                case "Female" : oppositeUserSex = "Male";
+                                    break;
+                            }
+                            getOppositeSexUsers();
+                        }
+                    }
+
+
                 }
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 
-        DatabaseReference femaleDB = FirebaseDatabase.getInstance().getReference().child("Users").child("Female");
-        femaleDB.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                if(dataSnapshot.getKey().equals(user.getUid())){
-                    userSex = "Female";
-                    oppositeUserSex  = "Male";
-                    getOppositeSexUsers();
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
 
     }
 
     public void getOppositeSexUsers(){
-        DatabaseReference oppositeSexDB = FirebaseDatabase.getInstance().getReference().child("Users").child(oppositeUserSex);
-        oppositeSexDB.addChildEventListener(new ChildEventListener() {
+
+        usersDB.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                if(dataSnapshot.exists()
-                        && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
-                        && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)){
-                    Cards item = new Cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
-                    rowItems.add(item);
-                    CardsAdapter.notifyDataSetChanged();
+
+                if(dataSnapshot.child("sex").getValue() != null){
+                    if(dataSnapshot.exists()
+                            && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)
+                            && dataSnapshot.child("sex").getValue().toString().equals(oppositeUserSex)){
+
+
+                        String profileImageUrl = "default";
+                        String currentTrackName = "none";
+
+                        dataSnapshot.child("profileImageUrl").getValue();
+
+                        if(dataSnapshot.child("profileImageUrl").getValue() != null)
+                            if(!dataSnapshot.child("profileImageUrl").getValue().equals("default")){
+                                profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                            }
+
+
+                        if(dataSnapshot.child("CurrentTrack").child("trackName").getValue() != null)
+                            if(!dataSnapshot.child("CurrentTrack").child("trackName").getValue().equals("none")){
+                                currentTrackName = dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString();
+                            }
+
+                        if(dataSnapshot.child("name").getValue() != null){
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(),profileImageUrl);
+                            System.out.print(trackName);
+                            item.setTrackName(currentTrackName);
+                            rowItems.add(item);
+                            CardAdapter.notifyDataSetChanged();
+                        }
+
+                    }
                 }
+
             }
 
             @Override
@@ -297,11 +323,42 @@ public class MainActivity extends Activity {
         });
     }
 
+    public void saveTrack(String currentTrackName , String currentTrackAlbum , String currentTrackArtist){
 
-    public void logOutUser(View view) {
-        mAuth.signOut();
-        Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
+        String userId = mAuth.getCurrentUser().getUid() ;
+
+        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("CurrentTrack");
+
+        Map<String, Object> userInformation = new HashMap<>();
+
+        userInformation.put("trackName",currentTrackName);
+        userInformation.put("trackArtist",currentTrackArtist);
+        userInformation.put("trackAlbum",currentTrackAlbum);
+        currentUserDB.setValue(currentTrackName);
+        currentUserDB.setValue(currentTrackAlbum);
+        currentUserDB.setValue(currentTrackArtist);
+
+        currentUserDB.updateChildren(userInformation);
+    }
+
+    public void logOutUser (View view){
+            mAuth.signOut();
+            Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+
+    public void goToProfile(View view) {
+        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
         startActivity(intent);
-        finish();
+        return;
+    }
+
+    public void goToMatches(View view) {
+        Intent intent = new Intent(MainActivity.this, MatchActivity.class);
+        startActivity(intent);
+        return;
     }
 }

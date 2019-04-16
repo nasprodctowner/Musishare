@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegistrationActivity"
+    tools:context=".User.RegistrationActivity"
     android:orientation="vertical">
 
     <EditText
@@ -16,7 +16,7 @@
     <RadioGroup
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-        android:id="@+id/radio_sexe">
+        android:id="@+id/radio_sex">
     <RadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,12 +34,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="EMAIL"
+        android:inputType="textEmailAddress"
         android:id="@+id/text_email"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="PASSWORD"
+        android:inputType="textPassword"
         android:id="@+id/text_password"/>
 
     <Button

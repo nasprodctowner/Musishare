@@ -1,9 +1,7 @@
-package fr.nashani.musishare;
+package fr.nashani.musishare.User;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,13 +9,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity {
+import fr.nashani.musishare.MainActivity;
+import fr.nashani.musishare.R;
+
+public class LoginActivity extends Activity {
 
     private Button mLogin;
     private TextView mRegister;
@@ -49,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuthStateListener = firebaseAuth -> {
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user != null){
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return;
