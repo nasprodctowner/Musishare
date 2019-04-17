@@ -307,7 +307,7 @@ public class MainActivity extends Activity {
                                     dataSnapshot.child("CurrentTrack").child("trackAlbum").getValue().toString(),
                                     profileImageUrl);
                             System.out.print(trackName);
-                            // item.setName();
+                            // Add Truck info to fire base
                             item.setTrackName(currentTrackName);
                             item.setTrackName(currentTrackArtist);
                             item.setTrackName(currentTrackAlbum);
