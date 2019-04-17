@@ -6,10 +6,21 @@ public class Card {
     private String phone;
     private String profileImageUrl;
     private String trackName;
+    private String trackArtist;
+    private String trackAlbum;
 
     public Card(String userId, String name, String profileImageUrl) {
         this.userId = userId;
         this.name = name;
+        this.profileImageUrl = profileImageUrl;
+
+    }
+    public Card(String userId, String name, String trackName, String trackArtist,String trackAlbum, String profileImageUrl) {
+        this.userId = userId;
+        this.name = name;
+        this.trackName = trackName;
+        this.trackArtist = trackArtist;
+        this.trackAlbum = trackAlbum;
         this.profileImageUrl = profileImageUrl;
 
     }
@@ -44,5 +55,29 @@ public class Card {
 
     public void setTrackName(String trackName) {
         this.trackName = trackName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getTrackArtist() {
+        return trackArtist;
+    }
+
+    public void setTrackArtist(String trackArtist) {
+        this.trackArtist = trackArtist;
+    }
+
+    public String getTrackAlbum() {
+        return trackAlbum;
+    }
+
+    public void setTrackAlbum(String trackAlbum) {
+        this.trackAlbum = trackAlbum;
     }
 }

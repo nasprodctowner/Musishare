@@ -30,14 +30,21 @@ public class CardAdapter extends ArrayAdapter<Card> {
         }
         TextView name = convertView.findViewById(R.id.userName);
         ImageView image = convertView.findViewById(R.id.userImage);
+        ImageView imageAlbum = convertView.findViewById(R.id.imageAlbum);
         TextView trackName = convertView.findViewById(R.id.trackName);
+        TextView TrackArtist = convertView.findViewById(R.id.trackArtist);
+        TextView TrackAlbum = convertView.findViewById(R.id.trackAlbum);
 
         name.setText(cardItem.getName());
         trackName.setText(cardItem.getTrackName());
+        TrackArtist.setText(cardItem.getTrackArtist());
+        TrackAlbum.setText(cardItem.getTrackAlbum());
 
 
         switch (cardItem.getProfileImageUrl()){
-            case "default" : image.setImageResource(R.drawable.ic_person_black_24dp);
+            case "default" :
+                image.setImageResource(R.drawable.ic_person_black_24dp);
+                imageAlbum.setImageResource(R.drawable.ic_launcher_background);
             break;
 
             default:

@@ -2,5 +2,8 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#4E4E4E</color>
+    <color name="border_color">#FFFFFF</color>
+    <color name="border_bg_color">#17000000</color>
+    <color name="loginButton">#C96363</color>
 </resources>
