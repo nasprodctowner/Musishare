@@ -7,6 +7,7 @@
     android:layout_gravity="center"
     android:clipToPadding="false"
     android:outlineProvider="bounds"
+
     android:padding="10dp">
 
     <android.support.v7.widget.CardView
@@ -20,6 +21,7 @@
         <FrameLayout
             android:layout_width="300dp"
             android:layout_height="300dp"
+            android:background="@drawable/card_background_color"
             android:layout_gravity="center">
 
             <LinearLayout
@@ -56,97 +58,96 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <pl.droidsonroids.gif.GifImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/headphones" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
                         <TextView
                             android:id="@+id/userName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:textAlignment="center"
+                            android:textStyle="bold"
                             android:textColor="@android:color/black"
-                            android:textSize="12sp"
+                            android:textSize="25sp"
                             tools:text="Name" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/age"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:textColor="@android:color/black"
-                            android:textSize="12sp"
-                            tools:text=",Age" />
-                    </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/imageAlbum"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            app:srcCompat="@mipmap/ic_launcher_round" />
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/imageAlbum"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:srcCompat="@mipmap/ic_launcher_round"
+                        android:layout_marginTop="16dp"/>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/trackName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
                             android:text="Title here" />
 
                         <TextView
                             android:id="@+id/trackArtist"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textSize="15sp"
                             android:text="Artist here" />
 
                         <TextView
                             android:id="@+id/trackAlbum"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textSize="10sp"
                             android:text="Album here" />
 
                         <TextView
                             android:id="@+id/textView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textSize="10sp"
                             android:text="Gender of music here" />
+
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <pl.droidsonroids.gif.GifImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="10dp"
+                            android:src="@drawable/headphones" />
+
+                        <TextView
+                            android:id="@+id/text_nowPlaying"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="10sp"
+                            android:textAlignment="center"
+                            android:text="Now playing on spotify" />
+
+                    </LinearLayout>
+
+
+
                 </LinearLayout>
 
                 <!--<LinearLayout
