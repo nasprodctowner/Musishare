@@ -2,7 +2,6 @@ package fr.nashani.musishare.Matches;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,7 @@ import fr.nashani.musishare.R;
 public class MatchActivity extends Activity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mMatchAdapteer;
+    private RecyclerView.Adapter mMatchAdapter;
     private RecyclerView.LayoutManager mMatchesLayoutManager;
     private ArrayList<Match> resultMatches = new ArrayList<Match>();
 
@@ -44,15 +43,12 @@ public class MatchActivity extends Activity {
         mMatchesLayoutManager = new LinearLayoutManager(MatchActivity.this);
         mRecyclerView.setLayoutManager(mMatchesLayoutManager);
 
-        mMatchAdapteer = new MatchAdapter(getDatSetMatches(),MatchActivity.this);
+        mMatchAdapter = new MatchAdapter(getDatSetMatches(),MatchActivity.this);
 
-        mRecyclerView.setAdapter(mMatchAdapteer);
+        mRecyclerView.setAdapter(mMatchAdapter);
 
 
         getUserMatchId();
-
-
-
 
     }
 
@@ -100,7 +96,7 @@ public class MatchActivity extends Activity {
 
                     Match match = new Match(userId,name,profileImageUrl,trackName);
                     resultMatches.add(match);
-                    mMatchAdapteer.notifyDataSetChanged();
+                    mMatchAdapter.notifyDataSetChanged();
                 }
             }
 
