@@ -49,6 +49,7 @@
                 android:drawableLeft="@drawable/ic_action_password"
                 android:hint="PASSWORD"
                 android:textColorHint="#000000"
+                android:inputType="textPassword"
                 android:textColor="@android:color/black"
                 android:textSize="14dp"
                 android:padding="5dp" />

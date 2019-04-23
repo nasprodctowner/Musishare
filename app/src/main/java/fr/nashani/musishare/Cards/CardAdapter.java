@@ -18,8 +18,8 @@ public class CardAdapter extends ArrayAdapter<Card> {
 
     Context context;
 
-    public CardAdapter(Context context , int resource , List<Card> items) {
-        super(context , resource , items);
+    public CardAdapter(Context context ,  List<Card> items) {
+        super(context , 0 , items);
     }
 
     public View getView (int position, View convertView, ViewGroup parent) {
@@ -56,4 +56,5 @@ public class CardAdapter extends ArrayAdapter<Card> {
 
         return convertView;
     }
+
 }

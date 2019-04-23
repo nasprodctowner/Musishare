@@ -44,12 +44,11 @@ public class MainActivity extends Activity {
     private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1"; //past your client ID
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
-    private Card card_data[];
     private CardAdapter CardAdapter;
-    ListView listView;
     List<Card> rowItems;
 
     private String currentUId;
+    private DatabaseReference userDB;
     private DatabaseReference usersDB, chatDB;
 
     private FirebaseAuth mAuth;
@@ -60,6 +59,7 @@ public class MainActivity extends Activity {
     private String trackName;
     private String trackArtist;
     private String trackAlbum;
+    private String latestTrackArtist = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,17 +72,18 @@ public class MainActivity extends Activity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
+
         checkUserSex();
 
-        // al = new ArrayList<>();
         rowItems = new ArrayList<Card>();
 
-        //CardAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.userName, al );
-        CardAdapter = new CardAdapter(this, R.layout.item, rowItems );
+        CardAdapter = new CardAdapter(this,rowItems);
+
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
         flingContainer.setAdapter(CardAdapter);
+
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
@@ -99,7 +100,6 @@ public class MainActivity extends Activity {
                 //If you want to use it just cast it (String) dataObject
                 Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
-                String name = obj.getName();
 
                 usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
@@ -109,7 +109,6 @@ public class MainActivity extends Activity {
             public void onRightCardExit(Object dataObject) {
                 Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
-                String name = obj.getName();
 
                 usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
                 isConnectionMatch(userId);
@@ -127,7 +126,6 @@ public class MainActivity extends Activity {
         });
 
 
-        // Optionally add an OnItemClickListener
         flingContainer.setOnItemClickListener((itemPosition, dataObject) -> {
 
              Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
@@ -144,6 +142,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
                     // Create a child inside Chat with new id key
                     String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
+
 
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
@@ -210,7 +209,7 @@ public class MainActivity extends Activity {
                 .setEventCallback(playerState -> {
                     final Track track = playerState.track;
                     if (track != null) {
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
+
                         text_currentlyPlayingMusic.setText("Currently playing music : ");
                         text_currentlyPlayingTrack.setText("Track :"+track.name);
                         text_currentlyPlayingArtist.setText("Artist :"+track.artist.name);
@@ -240,7 +239,6 @@ public class MainActivity extends Activity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                     if (dataSnapshot.exists()){
                         if(dataSnapshot.child("sex").getValue() != null){
                             userSex = dataSnapshot.child("sex").getValue().toString();
@@ -254,8 +252,6 @@ public class MainActivity extends Activity {
                             getOppositeSexUsers();
                         }
                     }
-
-
                 }
 
             @Override
@@ -263,8 +259,6 @@ public class MainActivity extends Activity {
 
             }
         });
-
-
 
     }
 
@@ -303,29 +297,18 @@ public class MainActivity extends Activity {
                             }
 
                         if(dataSnapshot.child("name").getValue() != null){
-                            Card item = new Card(dataSnapshot.getKey(),
-                                    dataSnapshot.child("name").getValue().toString(),
-                                    dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString(),
-                                    dataSnapshot.child("CurrentTrack").child("trackArtist").getValue().toString(),
-                                    dataSnapshot.child("CurrentTrack").child("trackAlbum").getValue().toString(),
-                                    profileImageUrl);
-                            System.out.print(trackName);
-                            // Add Truck info to fire base
-                            item.setTrackName(currentTrackName);
-                            item.setTrackName(currentTrackArtist);
-                            item.setTrackName(currentTrackAlbum);
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), currentTrackName, currentTrackArtist,currentTrackAlbum, profileImageUrl);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
 
                     }
                 }
-
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
+                             }
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
             }
@@ -375,5 +358,31 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, MatchActivity.class);
         startActivity(intent);
         return;
+    }
+
+    private void getLatestTrackInfo(String userId) {
+
+        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("CurrentTrack");
+
+        userDB.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0){
+                    Map<String,Object> map = (Map<String,Object>) dataSnapshot.getValue();
+
+                    if (map.get("trackArtist") != null){
+                        latestTrackArtist = map.get("trackArtist").toString();
+                        CardAdapter.notifyDataSetChanged();
+
+                        Log.i("couco",latestTrackArtist);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

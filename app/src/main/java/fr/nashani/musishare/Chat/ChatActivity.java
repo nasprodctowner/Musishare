@@ -34,6 +34,9 @@ public class ChatActivity extends AppCompatActivity {
     private EditText mSendEditText;
     private Button mSendButton;
     DatabaseReference mDatabaseUser, mDatabaseChat;
+
+    private ArrayList<ChatObject> resultChat = new ArrayList<ChatObject>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +50,8 @@ public class ChatActivity extends AppCompatActivity {
 
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("matches").child(matchId).child("chatId");
         mDatabaseChat = FirebaseDatabase.getInstance().getReference().child("Chat");
-        getChatId();
 
+        getChatId();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
@@ -86,25 +89,27 @@ public class ChatActivity extends AppCompatActivity {
         mSendEditText.setText(null);
     }
 
+    private List<ChatObject> getDatSetChat() {
+        return resultChat;
+    }
+
+
     private void getChatId () {
         mDatabaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists())
-                    chatId = (String) dataSnapshot.getValue();
-                Log.d("chatId" , chatId);
-                mDatabaseChat = mDatabaseChat.child(chatId);
-                // getChatMessages();
+                if (dataSnapshot.exists()) {
+                        chatId = dataSnapshot.getValue().toString();
+                        mDatabaseChat = mDatabaseChat.child(chatId);
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
+
         });
-    }
-    private ArrayList<ChatObject> resultChat = new ArrayList<ChatObject>();
-    private List<ChatObject> getDatSetChat() {
-        return resultChat;
     }
 }

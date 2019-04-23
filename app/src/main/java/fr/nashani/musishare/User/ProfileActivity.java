@@ -58,7 +58,7 @@ public class ProfileActivity extends Activity {
         mConfirm = findViewById(R.id.profile_confirm);
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        userDB = FirebaseDatabase.getInstance().getReference().child("Users") .child(userId);
+        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
         getUserInfo();
         mProfileImage.setOnClickListener(v -> {
