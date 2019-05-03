@@ -24,7 +24,7 @@ public class MatchViewHolders extends RecyclerView.ViewHolder implements View.On
 
         itemView.setOnClickListener(this);
 
-        mMatchId = (TextView) itemView.findViewById(R.id.matchId);
+        mMatchId = (TextView) itemView.findViewById(R.id.matchId); // il faut cacher ça
         mMatchName = (TextView) itemView.findViewById(R.id.matchName);
         mtrackName = (TextView) itemView.findViewById(R.id.matchTrackName);
         matchImage = (ImageView ) itemView.findViewById(R.id.matchImage);

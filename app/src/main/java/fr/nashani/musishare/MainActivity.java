@@ -68,7 +68,6 @@ public class MainActivity extends Activity {
 
         //get all users
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
-        chatDB = FirebaseDatabase.getInstance().getReference().child("Chat");
 
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
@@ -140,9 +139,13 @@ public class MainActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
+
                     // Create a child inside Chat with new id key
+                    FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
                     String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
+
+                    // create unique chat ID
 
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
@@ -373,8 +376,6 @@ public class MainActivity extends Activity {
                     if (map.get("trackArtist") != null){
                         latestTrackArtist = map.get("trackArtist").toString();
                         CardAdapter.notifyDataSetChanged();
-
-                        Log.i("couco",latestTrackArtist);
                     }
                 }
             }

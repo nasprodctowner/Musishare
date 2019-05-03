@@ -62,10 +62,8 @@ public class ChatActivity extends AppCompatActivity {
         mChatLayoutManager = new LinearLayoutManager(ChatActivity.this);
         mRecyclerView.setLayoutManager(mChatLayoutManager);
 
-        mChatAdapter = new ChatAdapter(getDatSetChat(),ChatActivity.this);
+        mChatAdapter = new ChatAdapter(getDataSetChange(),ChatActivity.this);
         mRecyclerView.setAdapter(mChatAdapter);
-
-
 
         mSendEditText =findViewById(R.id.message);
         mSendButton = findViewById(R.id.send);
@@ -79,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private ArrayList<ChatObject> resultChat = new ArrayList<ChatObject>();
-    private List<ChatObject> getDatSetChat() {
+    private ArrayList<ChatObject> getDataSetChange() {
         return resultChat;
     }
 
@@ -126,17 +124,17 @@ public class ChatActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists()){
                     String message = null;
-                    String createByUser = null;
+                    String createdByUser = null;
 
                     if (dataSnapshot.child("text").getValue()!=null){
                         message = dataSnapshot.child("text").getValue().toString();
                     }
-                    if (dataSnapshot.child("createByUser").getValue()!=null){
-                        createByUser = dataSnapshot.child("createByUser").getValue().toString();
+                    if (dataSnapshot.child("createdByUser").getValue()!=null){
+                        createdByUser = dataSnapshot.child("createdByUser").getValue().toString();
                     }
-                    if (message != null && createByUser != null) {
+                    if (message != null && createdByUser != null) {
                         Boolean currentUserBoolean = false;
-                        if (createByUser.equals(currentUserID) ){
+                        if (createdByUser.equals(currentUserID) ){
                             currentUserBoolean = true;
                         }
                         ChatObject newMessage = new ChatObject(message , currentUserBoolean);

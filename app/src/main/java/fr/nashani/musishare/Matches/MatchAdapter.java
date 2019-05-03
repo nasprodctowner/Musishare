@@ -43,7 +43,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolders>  {
     @Override
     public void onBindViewHolder(@NonNull MatchViewHolders holder, int i) {
 
-        holder.mMatchId.setText("ID : "+matchesList.get(i).getUserId());
+        holder.mMatchId.setText(matchesList.get(i).getUserId());
         holder.mMatchName.setText("Name : "+matchesList.get(i).getName());
         holder.mtrackName.setText("Last playing track : "+matchesList.get(i).getTrackName());
 

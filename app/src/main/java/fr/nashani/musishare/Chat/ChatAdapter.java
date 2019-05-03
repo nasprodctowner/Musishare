@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.nashani.musishare.R;
@@ -20,7 +21,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders>  {
     private List<ChatObject> chatList;
     private Context context;
 
-    public ChatAdapter(List<ChatObject> matchesList, Context context){
+    public ChatAdapter(ArrayList<ChatObject> matchesList, Context context){
         this.chatList = matchesList;
         this.context = context;
     }
