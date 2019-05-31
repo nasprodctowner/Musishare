@@ -48,8 +48,8 @@ public class MainActivity extends Activity {
     List<Card> rowItems;
 
     private String currentUId;
-    private DatabaseReference usersDB;
     private DatabaseReference userDB;
+    private DatabaseReference usersDB, chatDB;
 
     private FirebaseAuth mAuth;
 
@@ -68,8 +68,6 @@ public class MainActivity extends Activity {
 
         //get all users
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
-
-
 
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
@@ -128,7 +126,8 @@ public class MainActivity extends Activity {
 
 
         flingContainer.setOnItemClickListener((itemPosition, dataObject) -> {
-            Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
+
+             Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -140,9 +139,16 @@ public class MainActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
-                    //saving match to data base
-                    usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).setValue(true);
-                    usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+
+                    // Create a child inside Chat with new id key
+                    FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
+                    String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
+
+
+                    // create unique chat ID
+
+                    usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
+                    usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
                 }
             }
 
@@ -370,8 +376,6 @@ public class MainActivity extends Activity {
                     if (map.get("trackArtist") != null){
                         latestTrackArtist = map.get("trackArtist").toString();
                         CardAdapter.notifyDataSetChanged();
-
-                        Log.i("couco",latestTrackArtist);
                     }
                 }
             }
