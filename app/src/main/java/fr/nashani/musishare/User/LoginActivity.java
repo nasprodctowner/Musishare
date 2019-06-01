@@ -62,7 +62,7 @@ public class LoginActivity extends Activity {
         mLogin.setOnClickListener(v -> {
             final String email = mEmail.getText().toString();
             final String password = mPassword.getText().toString();
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(LoginActivity .this, task -> {
+            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(LoginActivity.this, task -> {
                 if(!task.isSuccessful()){
                     Toast.makeText(LoginActivity.this,"signin error",Toast.LENGTH_SHORT).show();
                 }

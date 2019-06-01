@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Spotify.SpotifyLoginActivity"
+            android:name=".Player.PlayerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
