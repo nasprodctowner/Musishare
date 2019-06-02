@@ -4,8 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -31,19 +43,58 @@ public class PlayerActivity extends Activity {
 
     public static boolean interrupt;
 
+    private TextView mTrackName, mTrackArtists, mtrackAlbumName;
+    private ImageView mtrackAlbumCover;
+
+    private FirebaseAuth mAuth;
+    DatabaseReference currentUserDB;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+
+        mAuth = FirebaseAuth.getInstance();
+
         interrupt = false;
+
         final AuthenticationRequest request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN);
         AuthenticationClient.openLoginActivity(this, AUTH_TOKEN_REQUEST_CODE, request);
+
+        mTrackName = findViewById(R.id.player_trackName);
+        mtrackAlbumName = findViewById(R.id.player_trackAlbum);
+        mTrackArtists = findViewById(R.id.player_trackArtist);
+        mtrackAlbumCover = findViewById(R.id.player_albumCover);
+
+        populateLastPlayingTrackView();
+
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void populateLastPlayingTrackView(){
+
+        String userId = mAuth.getCurrentUser().getUid();
+        currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("LastPlayedTrack");
+
+        currentUserDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
+                    mTrackName.setText(dataSnapshot.child("trackName").getValue().toString());
+                    mTrackArtists.setText(dataSnapshot.child("trackArtists").getValue().toString());
+                    mtrackAlbumName.setText(dataSnapshot.child("trackAlbum").getValue().toString());
+
+                    SetAlbumCoverAsyncTask c = new SetAlbumCoverAsyncTask(mtrackAlbumCover);
+                    c.execute(dataSnapshot.child("trackAlbumCoverURL").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private AuthenticationRequest getAuthenticationRequest(AuthenticationResponse.Type type) {
@@ -71,10 +122,5 @@ public class PlayerActivity extends Activity {
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             String mAccessCode = response.getCode();
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 }

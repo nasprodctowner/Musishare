@@ -52,31 +52,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_currentlyPlayingMusic"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No currently playing music" />
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingTrack"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingArtist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingAlbum"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
         android:background="#ffffff"

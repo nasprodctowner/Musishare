@@ -32,9 +32,6 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
     private String mAccessToken;
     private Call mCall;
 
-    String userId ;
-    DatabaseReference currentUserDB ;
-
     public UpdatePlayerStateRunnableThread(Music music, Handler handlerUI, String mAccessToken) {
         this.music = music;
         this.handlerUI = handlerUI;
@@ -92,12 +89,17 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
                     List<String> trackArtists = new ArrayList<>();
                     JSONArray artistsArray = items.getJSONArray("artists");
 
+                    StringBuilder stringBuilder = new StringBuilder("");
+
                     for(int i=0;i<artistsArray.length();i++){
                         JSONObject artist = artistsArray.getJSONObject(i);
-                        trackArtists.add(artist.getString("name"));
+                        stringBuilder.append(artist.getString("name"));
+                        stringBuilder.append(" , ");
                     }
+                    stringBuilder.setLength(stringBuilder.length() - 3);
+                    String artists = stringBuilder.toString();
 
-                    music.setTrackArtists(trackArtists);
+                    music.setTrackArtists(artists);
 
                     final JSONObject album = (JSONObject) items.get("album");
                     //getTrackAlbum
@@ -111,8 +113,6 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
 
                     music.setTrackAlbumCover(trackAlbumCover);
 
-
-
                     saveTrack(music);
 
                 } catch (JSONException e) {
@@ -125,9 +125,8 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
     private void saveTrack(Music music){
 
 
-        userId = mAuth.getCurrentUser().getUid() ;
-
-        currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("LastPlayedTrack");
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("LastPlayedTrack");
 
 
         Map<String, Object> LastPlayedTrackInformation = new HashMap<>();
@@ -136,24 +135,10 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
         LastPlayedTrackInformation.put("trackName",music.getTrackName());
         LastPlayedTrackInformation.put("trackAlbum",music.getTrackAlbumName());
         LastPlayedTrackInformation.put("trackAlbumCoverURL",music.getTrackAlbumCover());
+        LastPlayedTrackInformation.put("trackArtists",music.getTrackArtists());
 
         currentUserDB.setValue(LastPlayedTrackInformation);
-
         currentUserDB.updateChildren(LastPlayedTrackInformation);
-
-        //artists
-        DatabaseReference currentUserDBArtists = currentUserDB.child("artists");
-
-        Map<String, Object> artists = new HashMap<>();
-
-        int i = 0;
-        for (String artist : music.getTrackArtists()){
-            artists.put(""+i,artist);
-            i++;
-        }
-
-        currentUserDBArtists.setValue(artists);
-        currentUserDBArtists.updateChildren(artists);
 
     }
 
