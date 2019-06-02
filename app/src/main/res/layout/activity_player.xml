@@ -54,7 +54,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/trackName"
+                android:id="@+id/player_trackName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -62,27 +62,21 @@
                 android:text="Title here" />
 
             <TextView
-                android:id="@+id/trackArtist"
+                android:id="@+id/player_trackArtist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:text="Artist here" />
 
             <TextView
-                android:id="@+id/trackAlbum"
+                android:id="@+id/player_trackAlbum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="10sp"
                 android:text="Album here" />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:text="Gender of music here" />
-
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

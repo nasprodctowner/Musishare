@@ -1,7 +1,6 @@
 package fr.nashani.musishare.Player;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +32,9 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
     private String mAccessToken;
     private Call mCall;
 
+    String userId ;
+    DatabaseReference currentUserDB ;
+
     public UpdatePlayerStateRunnableThread(Music music, Handler handlerUI, String mAccessToken) {
         this.music = music;
         this.handlerUI = handlerUI;
@@ -42,9 +44,15 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
 
     @Override
     public void run() {
-        getMusicData();
-        handlerUI.postDelayed(this,5000);
+
+
+        if(!PlayerActivity.interrupt){
+            getMusicData();
+            handlerUI.postDelayed(this,5000);
+        }
+
     }
+
 
     private void getMusicData() {
         if (mAccessToken == null) {
@@ -72,8 +80,13 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
                     final JSONObject items = (JSONObject) jsonObject.get("item");
 
-                    //getTrackName
+                    //getTrackId
+                    String trackId = items.get("id").toString();
+                    music.setTrackId(trackId);
+
+                    //getName
                     String trackName = items.get("name").toString();
+                    music.setTrackName(trackName);
 
                     //getTrackArtists
                     List<String> trackArtists = new ArrayList<>();
@@ -84,17 +97,23 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
                         trackArtists.add(artist.getString("name"));
                     }
 
+                    music.setTrackArtists(trackArtists);
+
                     final JSONObject album = (JSONObject) items.get("album");
                     //getTrackAlbum
                     String trackAlbumName = album.getString("name");
+                    music.setTrackAlbumName(trackAlbumName);
 
 
                     //getAlbumCoverName
                     JSONArray images = album.getJSONArray("images");
                     String trackAlbumCover = images.getJSONObject(1).getString("url");
 
-                    if()
-                    saveTrack(trackName,trackAlbumName,trackAlbumCover,trackArtists);
+                    music.setTrackAlbumCover(trackAlbumCover);
+
+
+
+                    saveTrack(music);
 
                 } catch (JSONException e) {
 
@@ -103,17 +122,20 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
         });
     }
 
-    private void saveTrack(String trackName, String trackAlbumName, String trackAlbumCoverURL, List<String> trackArtists){
+    private void saveTrack(Music music){
 
-        String userId = mAuth.getCurrentUser().getUid() ;
 
-        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("LastPlayedTrack");
+        userId = mAuth.getCurrentUser().getUid() ;
+
+        currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("LastPlayedTrack");
+
 
         Map<String, Object> LastPlayedTrackInformation = new HashMap<>();
 
-        LastPlayedTrackInformation.put("trackName",trackName);
-        LastPlayedTrackInformation.put("trackAlbum",trackAlbumName);
-        LastPlayedTrackInformation.put("trackAlbumCoverURL",trackAlbumCoverURL);
+        LastPlayedTrackInformation.put("trackId",music.getTrackId());
+        LastPlayedTrackInformation.put("trackName",music.getTrackName());
+        LastPlayedTrackInformation.put("trackAlbum",music.getTrackAlbumName());
+        LastPlayedTrackInformation.put("trackAlbumCoverURL",music.getTrackAlbumCover());
 
         currentUserDB.setValue(LastPlayedTrackInformation);
 
@@ -125,13 +147,12 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
         Map<String, Object> artists = new HashMap<>();
 
         int i = 0;
-        for (String artist : trackArtists){
+        for (String artist : music.getTrackArtists()){
             artists.put(""+i,artist);
             i++;
         }
 
         currentUserDBArtists.setValue(artists);
-
         currentUserDBArtists.updateChildren(artists);
 
     }
@@ -141,5 +162,7 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
             mCall.cancel();
         }
     }
+
+
 
 }

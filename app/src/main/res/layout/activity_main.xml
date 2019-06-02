@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="horizontal">
 
         <Button
@@ -18,7 +19,7 @@
             android:layout_height="match_parent"
             android:onClick="connectToPlayer"
             android:layout_weight="1"
-            android:textSize="14dp"
+            android:textSize="10sp"
             android:text="My Player" />
 
         <Button
@@ -27,6 +28,7 @@
             android:layout_height="match_parent"
             android:onClick="goToProfile"
             android:layout_weight="1"
+            android:textSize="10sp"
             android:text="Profile" />
 
         <Button
@@ -35,6 +37,7 @@
             android:layout_height="match_parent"
             android:onClick="goToMatches"
             android:layout_weight="1"
+            android:textSize="10sp"
             android:text="Matches" />
 
         <Button
@@ -43,6 +46,7 @@
             android:layout_height="match_parent"
             android:onClick="logOutUser"
             android:layout_weight="1"
+            android:textSize="10sp"
             android:text="Logout"
             />
 

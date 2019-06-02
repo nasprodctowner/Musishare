@@ -37,7 +37,6 @@ public class ProfileActivity extends Activity {
     private ImageView mProfileImage;
     private Button mBack, mConfirm;
 
-    private FirebaseAuth mAuth ;
     private DatabaseReference userDB;
 
     private String userId, name, phone, profileImageURL, userSex;
@@ -108,8 +107,6 @@ public class ProfileActivity extends Activity {
                                 break;
 
                         }
-
-                        //URL TO IMAGE
 
                     }
                 }

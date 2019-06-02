@@ -27,11 +27,16 @@ public class PlayerActivity extends Activity {
     Music music;
     Handler handlerUI = new Handler();
 
+    Thread thread;
+
+    public static boolean interrupt;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-
+        interrupt = false;
         final AuthenticationRequest request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN);
         AuthenticationClient.openLoginActivity(this, AUTH_TOKEN_REQUEST_CODE, request);
     }
@@ -58,12 +63,18 @@ public class PlayerActivity extends Activity {
             String mAccessToken = response.getAccessToken();
 
             //démarrer le thread pour get les informations depuis Spotify API
-            Thread thread = new Thread(new UpdatePlayerStateRunnableThread(music,handlerUI,mAccessToken));
+            music = new Music();
+            thread = new Thread(new UpdatePlayerStateRunnableThread(music,handlerUI,mAccessToken));
             thread.start();
+
 
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             String mAccessCode = response.getCode();
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 }

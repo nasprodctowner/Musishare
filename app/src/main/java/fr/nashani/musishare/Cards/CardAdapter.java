@@ -31,7 +31,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TextView name = convertView.findViewById(R.id.userName);
         ImageView image = convertView.findViewById(R.id.userImage);
         ImageView imageAlbum = convertView.findViewById(R.id.imageAlbum);
-        TextView trackName = convertView.findViewById(R.id.trackName);
+        TextView trackName = convertView.findViewById(R.id.name);
         TextView TrackArtist = convertView.findViewById(R.id.trackArtist);
         TextView TrackAlbum = convertView.findViewById(R.id.trackAlbum);
 

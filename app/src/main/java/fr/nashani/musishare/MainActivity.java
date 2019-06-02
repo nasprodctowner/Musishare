@@ -64,6 +64,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        PlayerActivity.interrupt = false;
+
         //get all users
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -127,9 +129,6 @@ public class MainActivity extends Activity {
 
              Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
         });
-
-
-
 
 
 
@@ -356,6 +355,7 @@ public class MainActivity extends Activity {
     }*/
 
     public void logOutUser (View view){
+            PlayerActivity.interrupt = true;
             mAuth.signOut();
             Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
             startActivity(intent);

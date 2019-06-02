@@ -4,50 +4,61 @@ import java.util.List;
 
 public class Music {
 
-    private String ID;
-    private String Name;
-    private List<String> artists;
-    private String album;
-    private String albumImage;
+    private String trackId;
+    private String trackName;
+    private List<String> trackArtists;
+    private String trackAlbumName;
+    private String trackAlbumCover;
 
-    public Music(String ID, String name, List<Artist> artists, String album, String albumImage, List<Gender> genders) {
-        this.ID = ID;
-        Name = name;
-        this.album = album;
-        this.albumImage = albumImage;
+    public Music() {
     }
 
-    public String getID() {
-        return ID;
+    public Music(String trackId, String trackName, List<String> trackArtists, String trackAlbumName, String trackAlbumCover) {
+        this.trackId = trackId;
+        this.trackName = trackName;
+        this.trackArtists = trackArtists;
+        this.trackAlbumName = trackAlbumName;
+        this.trackAlbumCover = trackAlbumCover;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public String getTrackId() {
+        return trackId;
     }
 
-    public String getName() {
-        return Name;
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
     }
 
-    public void setName(String name) {
-        Name = name;
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String name) {
+        this.trackName = trackName;
     }
 
 
-    public String getAlbum() {
-        return album;
+    public String getTrackAlbumName() {
+        return trackAlbumName;
     }
 
-    public void setAlbum(String album) {
-        this.album = album;
+    public void setTrackAlbumName(String trackAlbumName) {
+        this.trackAlbumName = trackAlbumName;
     }
 
-    public String getAlbumImage() {
-        return albumImage;
+    public String getTrackAlbumCover() {
+        return trackAlbumCover;
     }
 
-    public void setAlbumImage(String albumImage) {
-        this.albumImage = albumImage;
+    public void setTrackAlbumCover(String trackAlbumCover) {
+        this.trackAlbumCover = trackAlbumCover;
     }
 
+    public List<String> getTrackArtists() {
+        return trackArtists;
+    }
+
+    public void setTrackArtists(List<String> trackArtists) {
+        this.trackArtists = trackArtists;
+    }
 }
