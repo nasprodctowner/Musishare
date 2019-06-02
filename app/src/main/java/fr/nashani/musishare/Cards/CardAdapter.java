@@ -40,11 +40,11 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TrackArtist.setText(cardItem.getTrackArtist());
         TrackAlbum.setText(cardItem.getTrackAlbum());
 
+        Glide.with(convertView.getContext()).load(cardItem.getTrackAlbumCover()).into(imageAlbum);
 
         switch (cardItem.getProfileImageUrl()){
             case "default" :
                 image.setImageResource(R.drawable.ic_person_black_24dp);
-                imageAlbum.setImageResource(R.drawable.ic_launcher_background);
             break;
 
             default:
@@ -52,7 +52,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
             break;
 
         }
-        // Set image
+
 
         return convertView;
     }

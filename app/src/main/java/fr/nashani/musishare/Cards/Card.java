@@ -8,6 +8,7 @@ public class Card {
     private String trackName;
     private String trackArtist;
     private String trackAlbum;
+    private String trackAlbumCover;
 
     public Card(String userId, String name, String profileImageUrl) {
         this.userId = userId;
@@ -15,14 +16,14 @@ public class Card {
         this.profileImageUrl = profileImageUrl;
 
     }
-    public Card(String userId, String name, String trackName, String trackArtist,String trackAlbum, String profileImageUrl) {
+    public Card(String userId, String name, String trackName, String trackArtist,String trackAlbum, String trackAlbumCover, String profileImageUrl) {
         this.userId = userId;
         this.name = name;
         this.trackName = trackName;
         this.trackArtist = trackArtist;
         this.trackAlbum = trackAlbum;
         this.profileImageUrl = profileImageUrl;
-
+        this.trackAlbumCover = trackAlbumCover;
     }
 
     public String getUserId() {
@@ -79,5 +80,13 @@ public class Card {
 
     public void setTrackAlbum(String trackAlbum) {
         this.trackAlbum = trackAlbum;
+    }
+
+    public String getTrackAlbumCover() {
+        return trackAlbumCover;
+    }
+
+    public void setTrackAlbumCover(String trackAlbumCover) {
+        this.trackAlbumCover = trackAlbumCover;
     }
 }

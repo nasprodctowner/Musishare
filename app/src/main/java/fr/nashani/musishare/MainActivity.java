@@ -134,7 +134,6 @@ public class MainActivity extends Activity {
 
 
                     // create unique chat ID
-
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
                 }
@@ -201,9 +200,10 @@ public class MainActivity extends Activity {
 
 
                         String profileImageUrl = "default";
-                        String currentTrackName = "none";
-                        String currentTrackArtist = "none";
-                        String currentTrackAlbum = "none";
+                        String lastTrackName = "none";
+                        String lastTrackArtists = "none";
+                        String lastTrackAlbumName = "none";
+                        String lastTrackAlbumCoverURL = "default";
 
                         dataSnapshot.child("profileImageUrl").getValue();
 
@@ -213,15 +213,16 @@ public class MainActivity extends Activity {
                             }
 
 
-                        if(dataSnapshot.child("CurrentTrack").child("trackName").getValue() != null)
-                            if(!dataSnapshot.child("CurrentTrack").child("trackName").getValue().equals("none")){
-                                currentTrackName = dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString();
-                                currentTrackArtist = dataSnapshot.child("CurrentTrack").child("trackArtist").getValue().toString();
-                                currentTrackAlbum = dataSnapshot.child("CurrentTrack").child("trackAlbum").getValue().toString();
+                        if(dataSnapshot.child("LastPlayedTrack").child("trackId").getValue() != null)
+                            if(!dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().equals("none")){
+                                lastTrackName = dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().toString();
+                                lastTrackArtists = dataSnapshot.child("LastPlayedTrack").child("trackArtists").getValue().toString();
+                                lastTrackAlbumName = dataSnapshot.child("LastPlayedTrack").child("trackAlbum").getValue().toString();
+                                lastTrackAlbumCoverURL = dataSnapshot.child("LastPlayedTrack").child("trackAlbumCoverURL").getValue().toString();
                             }
 
                         if(dataSnapshot.child("name").getValue() != null){
-                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), currentTrackName, currentTrackArtist,currentTrackAlbum, profileImageUrl);
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
