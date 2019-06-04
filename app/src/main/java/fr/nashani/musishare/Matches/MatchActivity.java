@@ -90,8 +90,8 @@ public class MatchActivity extends Activity {
                         profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
                     }
 
-                    if(dataSnapshot.child("CurrentTrack").child("trackName").getValue() != null){
-                        trackName = dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString();
+                    if(dataSnapshot.child("LastPlayedTrack").child("trackName").getValue() != null){
+                        trackName = dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().toString();
                     }
 
                     Match match = new Match(userId,name,profileImageUrl,trackName);

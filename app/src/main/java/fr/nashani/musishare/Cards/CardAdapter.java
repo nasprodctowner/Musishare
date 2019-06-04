@@ -31,7 +31,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TextView name = convertView.findViewById(R.id.userName);
         ImageView image = convertView.findViewById(R.id.userImage);
         ImageView imageAlbum = convertView.findViewById(R.id.imageAlbum);
-        TextView trackName = convertView.findViewById(R.id.trackName);
+        TextView trackName = convertView.findViewById(R.id.name);
         TextView TrackArtist = convertView.findViewById(R.id.trackArtist);
         TextView TrackAlbum = convertView.findViewById(R.id.trackAlbum);
 
@@ -40,11 +40,11 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TrackArtist.setText(cardItem.getTrackArtist());
         TrackAlbum.setText(cardItem.getTrackAlbum());
 
+        Glide.with(convertView.getContext()).load(cardItem.getTrackAlbumCover()).into(imageAlbum);
 
         switch (cardItem.getProfileImageUrl()){
             case "default" :
                 image.setImageResource(R.drawable.ic_person_black_24dp);
-                imageAlbum.setImageResource(R.drawable.ic_launcher_background);
             break;
 
             default:
@@ -52,7 +52,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
             break;
 
         }
-        // Set image
+
 
         return convertView;
     }

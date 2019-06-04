@@ -7,9 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,29 +18,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
-import com.spotify.android.appremote.api.ConnectionParams;
-import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import fr.nashani.musishare.Cards.Card;
 import fr.nashani.musishare.Cards.CardAdapter;
 import fr.nashani.musishare.Matches.MatchActivity;
-import fr.nashani.musishare.Spotify.SpotifyLoginActivity;
+import fr.nashani.musishare.Player.PlayerActivity;
 import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
 import fr.nashani.musishare.User.ProfileActivity;
 
 
 public class MainActivity extends Activity {
 
-    private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1"; //past your client ID
-    private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
-    private SpotifyAppRemote mSpotifyAppRemote;
     private CardAdapter CardAdapter;
     List<Card> rowItems;
 
@@ -56,15 +44,13 @@ public class MainActivity extends Activity {
     private String userSex;
     private String oppositeUserSex;
 
-    private String trackName;
-    private String trackArtist;
-    private String trackAlbum;
-    private String latestTrackArtist = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PlayerActivity.interrupt = false;
 
         //get all users
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -130,6 +116,8 @@ public class MainActivity extends Activity {
              Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
         });
 
+
+
     }
 
     private void isConnectionMatch(String userId) {
@@ -146,7 +134,6 @@ public class MainActivity extends Activity {
 
 
                     // create unique chat ID
-
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
                 }
@@ -160,75 +147,8 @@ public class MainActivity extends Activity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
-
-
-        SpotifyAppRemote.connect(this, connectionParams,
-                new Connector.ConnectionListener() {
-
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-                        Log.d("MainActivity", "Connected! Yay!");
-                        Button button_connectToSpotifyApp = findViewById(R.id.button_connectToSpotifyApp);
-                        button_connectToSpotifyApp.setVisibility(View.GONE);
-                        // Now you can start interacting with App Remote
-                        connected();
-
-                    }
-
-                    public void onFailure(Throwable throwable) {
-                        Log.e("MyActivity", throwable.getMessage(), throwable);
-
-                        // Something went wrong when attempting to connect! Handle errors here
-                    }
-                });
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-    }
-
-    private void connected() {
-
-        TextView text_currentlyPlayingMusic = findViewById(R.id.text_currentlyPlayingMusic);
-        TextView text_currentlyPlayingTrack = findViewById(R.id.text_currentlyPlayingTrack);
-        TextView text_currentlyPlayingArtist = findViewById(R.id.text_currentlyPlayingArtist);
-        TextView text_currentlyPlayingAlbum = findViewById(R.id.text_currentlyPlayingAlbum);
-
-        // Subscribe to PlayerState
-        mSpotifyAppRemote.getPlayerApi()
-                .subscribeToPlayerState()
-                .setEventCallback(playerState -> {
-                    final Track track = playerState.track;
-                    if (track != null) {
-
-                        text_currentlyPlayingMusic.setText("Currently playing music : ");
-                        text_currentlyPlayingTrack.setText("Track :"+track.name);
-                        text_currentlyPlayingArtist.setText("Artist :"+track.artist.name);
-                        text_currentlyPlayingAlbum.setText("Album : "+track.album.name);
-
-                        trackName = track.name;
-                        trackArtist = track.artist.name;
-                        trackAlbum = track.album.name;
-                        saveTrack(trackName, trackAlbum, trackArtist);
-
-                    }
-                });
-    }
-
-    public void connect(View view) {
-        Intent intent = new Intent(this, SpotifyLoginActivity.class);
+    public void connectToPlayer(View view) {
+        Intent intent = new Intent(this, PlayerActivity.class);
         startActivity(intent);
     }
 
@@ -280,9 +200,10 @@ public class MainActivity extends Activity {
 
 
                         String profileImageUrl = "default";
-                        String currentTrackName = "none";
-                        String currentTrackArtist = "none";
-                        String currentTrackAlbum = "none";
+                        String lastTrackName = "none";
+                        String lastTrackArtists = "none";
+                        String lastTrackAlbumName = "none";
+                        String lastTrackAlbumCoverURL = "default";
 
                         dataSnapshot.child("profileImageUrl").getValue();
 
@@ -292,15 +213,16 @@ public class MainActivity extends Activity {
                             }
 
 
-                        if(dataSnapshot.child("CurrentTrack").child("trackName").getValue() != null)
-                            if(!dataSnapshot.child("CurrentTrack").child("trackName").getValue().equals("none")){
-                                currentTrackName = dataSnapshot.child("CurrentTrack").child("trackName").getValue().toString();
-                                currentTrackArtist = dataSnapshot.child("CurrentTrack").child("trackArtist").getValue().toString();
-                                currentTrackAlbum = dataSnapshot.child("CurrentTrack").child("trackAlbum").getValue().toString();
+                        if(dataSnapshot.child("LastPlayedTrack").child("trackId").getValue() != null)
+                            if(!dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().equals("none")){
+                                lastTrackName = dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().toString();
+                                lastTrackArtists = dataSnapshot.child("LastPlayedTrack").child("trackArtists").getValue().toString();
+                                lastTrackAlbumName = dataSnapshot.child("LastPlayedTrack").child("trackAlbum").getValue().toString();
+                                lastTrackAlbumCoverURL = dataSnapshot.child("LastPlayedTrack").child("trackAlbumCoverURL").getValue().toString();
                             }
 
                         if(dataSnapshot.child("name").getValue() != null){
-                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), currentTrackName, currentTrackArtist,currentTrackAlbum, profileImageUrl);
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
@@ -324,25 +246,9 @@ public class MainActivity extends Activity {
         });
     }
 
-    public void saveTrack(String currentTrackName , String currentTrackAlbum , String currentTrackArtist){
-
-        String userId = mAuth.getCurrentUser().getUid() ;
-
-        DatabaseReference currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("CurrentTrack");
-
-        Map<String, Object> userInformation = new HashMap<>();
-
-        userInformation.put("trackName",currentTrackName);
-        userInformation.put("trackArtist",currentTrackArtist);
-        userInformation.put("trackAlbum",currentTrackAlbum);
-        currentUserDB.setValue(currentTrackName);
-        currentUserDB.setValue(currentTrackAlbum);
-        currentUserDB.setValue(currentTrackArtist);
-
-        currentUserDB.updateChildren(userInformation);
-    }
 
     public void logOutUser (View view){
+            PlayerActivity.interrupt = true;
             mAuth.signOut();
             Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
             startActivity(intent);
@@ -363,27 +269,5 @@ public class MainActivity extends Activity {
         return;
     }
 
-    private void getLatestTrackInfo(String userId) {
 
-        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("CurrentTrack");
-
-        userDB.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0){
-                    Map<String,Object> map = (Map<String,Object>) dataSnapshot.getValue();
-
-                    if (map.get("trackArtist") != null){
-                        latestTrackArtist = map.get("trackArtist").toString();
-                        CardAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 }

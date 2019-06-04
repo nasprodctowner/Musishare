@@ -10,15 +10,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_connectToSpotifyApp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:onClick="connect"
+            android:onClick="connectToPlayer"
             android:layout_weight="1"
-            android:text="Spotify" />
+            android:textSize="10sp"
+            android:text="My Player" />
 
         <Button
             android:id="@+id/button_profile"
@@ -26,6 +28,7 @@
             android:layout_height="match_parent"
             android:onClick="goToProfile"
             android:layout_weight="1"
+            android:textSize="10sp"
             android:text="Profile" />
 
         <Button
@@ -34,6 +37,7 @@
             android:layout_height="match_parent"
             android:onClick="goToMatches"
             android:layout_weight="1"
+            android:textSize="10sp"
             android:text="Matches" />
 
         <Button
@@ -42,35 +46,11 @@
             android:layout_height="match_parent"
             android:onClick="logOutUser"
             android:layout_weight="1"
+            android:textSize="10sp"
             android:text="Logout"
             />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingMusic"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No currently playing music" />
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingTrack"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingArtist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/text_currentlyPlayingAlbum"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
 
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
