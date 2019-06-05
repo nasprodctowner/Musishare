@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +40,7 @@ public class PlayerActivity extends Activity {
 
     public static boolean interrupt;
 
-    private TextView mTrackName, mTrackArtists, mtrackAlbumName;
+    private TextView mTrackName, mTrackArtists, mtrackAlbumName, myPlayerInstruction;
     private ImageView mtrackAlbumCover;
 
     private FirebaseAuth mAuth;
@@ -66,7 +63,7 @@ public class PlayerActivity extends Activity {
         mtrackAlbumName = findViewById(R.id.player_trackAlbum);
         mTrackArtists = findViewById(R.id.player_trackArtist);
         mtrackAlbumCover = findViewById(R.id.player_albumCover);
-
+        myPlayerInstruction = findViewById(R.id.player_instruction);
         populateLastPlayingTrackView();
 
     }
@@ -80,12 +77,18 @@ public class PlayerActivity extends Activity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null){
+                    myPlayerInstruction.setText("Your currently playing track on Spotify : ");
                     mTrackName.setText(dataSnapshot.child("trackName").getValue().toString());
                     mTrackArtists.setText(dataSnapshot.child("trackArtists").getValue().toString());
                     mtrackAlbumName.setText(dataSnapshot.child("trackAlbum").getValue().toString());
-
                     SetAlbumCoverAsyncTask c = new SetAlbumCoverAsyncTask(mtrackAlbumCover);
                     c.execute(dataSnapshot.child("trackAlbumCoverURL").getValue().toString());
+                }else {
+                    myPlayerInstruction.setText("Please play some music on Spotify !");
+                    mTrackName.setText("Track name");
+                    mTrackArtists.setText("Artists");
+                    mtrackAlbumName.setText("Album name");
+                    mtrackAlbumCover.setImageResource(R.drawable.music_note);
                 }
             }
 
@@ -122,5 +125,11 @@ public class PlayerActivity extends Activity {
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             String mAccessCode = response.getCode();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateLastPlayingTrackView();
     }
 }

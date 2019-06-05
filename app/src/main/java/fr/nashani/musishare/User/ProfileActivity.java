@@ -1,16 +1,27 @@
 package fr.nashani.musishare.User;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Task;
@@ -43,6 +54,8 @@ public class ProfileActivity extends Activity {
 
     private Uri resultUri;
 
+    private static final int MY_PERMISSIONS_REQUEST_READ = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +72,12 @@ public class ProfileActivity extends Activity {
 
         getUserInfo();
         mProfileImage.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            startActivityForResult(intent,1);
+            isReadFromStoragePermitted();
+
         });
 
         mConfirm.setOnClickListener(v -> {
-          saveUserInformation();
+            saveUserInformation();
         });
 
         mBack.setOnClickListener(v -> {
@@ -80,7 +92,7 @@ public class ProfileActivity extends Activity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0){
-                        Map<String,Object> map = (Map<String,Object>) dataSnapshot.getValue();
+                    Map<String,Object> map = (Map<String,Object>) dataSnapshot.getValue();
 
                     if (map.get("name") != null){
                         name = map.get("name").toString();
@@ -169,6 +181,45 @@ public class ProfileActivity extends Activity {
 
     }
 
+
+
+    public void isReadFromStoragePermitted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                // Permission is not granted
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ);
+                }
+                else {
+                    // No explanation needed; request the permission
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ);
+                }
+            }else {
+                pickImageFromStorage();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(ProfileActivity.this, "Permission granted", Toast.LENGTH_LONG).show();
+                    pickImageFromStorage();
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Permission not granted", Toast.LENGTH_LONG).show();
+                    break;
+                }
+
+            }
+
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -180,4 +231,11 @@ public class ProfileActivity extends Activity {
 
         }
     }
+
+    private void pickImageFromStorage(){
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent,1);
+    }
+
 }

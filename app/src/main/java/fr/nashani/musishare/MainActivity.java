@@ -50,6 +50,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // lancer le thread pour mettre à jour le player de l'utilisateur
         PlayerActivity.interrupt = false;
 
         //get all users
@@ -147,11 +148,6 @@ public class MainActivity extends Activity {
 
     }
 
-    public void connectToPlayer(View view) {
-        Intent intent = new Intent(this, PlayerActivity.class);
-        startActivity(intent);
-    }
-
 
     public void checkUserSex(){
 
@@ -246,6 +242,11 @@ public class MainActivity extends Activity {
         });
     }
 
+
+    public void connectToPlayer(View view) {
+        Intent intent = new Intent(this, PlayerActivity.class);
+        startActivity(intent);
+    }
 
     public void logOutUser (View view){
             PlayerActivity.interrupt = true;
