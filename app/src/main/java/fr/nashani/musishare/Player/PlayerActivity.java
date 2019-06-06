@@ -40,8 +40,6 @@ public class PlayerActivity extends Activity {
 
     Music music;
 
-    public static boolean interrupt;
-
     private TextView mTrackName, mTrackArtists, mtrackAlbumName, myPlayerInstruction;
     private ImageView mtrackAlbumCover;
 

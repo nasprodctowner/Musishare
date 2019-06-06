@@ -46,6 +46,7 @@ public class SpotifyService {
                 .build();
 
         cancelCall();
+
         mCall = mOkHttpClient.newCall(request);
 
         mCall.enqueue(new Callback() {

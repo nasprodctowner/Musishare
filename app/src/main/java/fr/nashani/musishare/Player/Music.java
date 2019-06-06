@@ -1,7 +1,5 @@
 package fr.nashani.musishare.Player;
 
-import java.util.List;
-
 public class Music {
 
     private String trackId;

@@ -50,9 +50,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // lancer le thread pour mettre à jour le player de l'utilisateur
-        PlayerActivity.interrupt = false;
-
         //get all users
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -250,7 +247,6 @@ public class MainActivity extends Activity {
     }
 
     public void logOutUser (View view){
-            PlayerActivity.interrupt = true;
             mAuth.signOut();
             Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
             startActivity(intent);
