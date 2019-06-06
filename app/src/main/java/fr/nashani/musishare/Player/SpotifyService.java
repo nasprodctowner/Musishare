@@ -1,7 +1,5 @@
 package fr.nashani.musishare.Player;
 
-import android.os.Handler;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -11,9 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -22,42 +18,30 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class UpdatePlayerStateRunnableThread implements Runnable {
+public class SpotifyService {
 
     private Music music;
-    private Handler handlerUI;
     private FirebaseAuth mAuth;
+    private String trackId;
 
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String mAccessToken;
     private Call mCall;
 
-    public UpdatePlayerStateRunnableThread(Music music, Handler handlerUI, String mAccessToken) {
+    public SpotifyService(Music music, String trackId, String mAccessToken) {
         this.music = music;
-        this.handlerUI = handlerUI;
+        this.trackId = trackId;
         this.mAccessToken = mAccessToken;
         this.mAuth = FirebaseAuth.getInstance();
     }
 
-    @Override
-    public void run() {
-
-
-        if(!PlayerActivity.interrupt){
-            getMusicData();
-            handlerUI.postDelayed(this,5000);
-        }
-
-    }
-
-
-    private void getMusicData() {
+    public void getTrackData() {
         if (mAccessToken == null) {
             return;
         }
 
         final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/me/player")
+                .url("https://api.spotify.com/v1/tracks/"+trackId)
                 .addHeader("Authorization","Bearer " + mAccessToken)
                 .build();
 
@@ -75,19 +59,17 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
 
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
-                    final JSONObject items = (JSONObject) jsonObject.get("item");
 
                     //getTrackId
-                    String trackId = items.get("id").toString();
+                    String trackId = jsonObject.get("id").toString();
                     music.setTrackId(trackId);
 
                     //getName
-                    String trackName = items.get("name").toString();
+                    String trackName = jsonObject.get("name").toString();
                     music.setTrackName(trackName);
 
                     //getTrackArtists
-                    List<String> trackArtists = new ArrayList<>();
-                    JSONArray artistsArray = items.getJSONArray("artists");
+                    JSONArray artistsArray = jsonObject.getJSONArray("artists");
 
                     StringBuilder stringBuilder = new StringBuilder("");
 
@@ -101,7 +83,7 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
 
                     music.setTrackArtists(artists);
 
-                    final JSONObject album = (JSONObject) items.get("album");
+                    final JSONObject album = (JSONObject) jsonObject.get("album");
                     //getTrackAlbum
                     String trackAlbumName = album.getString("name");
                     music.setTrackAlbumName(trackAlbumName);
@@ -113,7 +95,7 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
 
                     music.setTrackAlbumCover(trackAlbumCover);
 
-                    saveTrack(music);
+                    saveTrackInTheDatabase(music);
 
                 } catch (JSONException e) {
 
@@ -122,7 +104,7 @@ public class UpdatePlayerStateRunnableThread implements Runnable {
         });
     }
 
-    private void saveTrack(Music music){
+    private void saveTrackInTheDatabase(Music music){
 
 
         String userId = mAuth.getCurrentUser().getUid();

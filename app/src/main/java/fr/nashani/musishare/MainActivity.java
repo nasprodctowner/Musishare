@@ -27,7 +27,6 @@ import fr.nashani.musishare.Cards.CardAdapter;
 import fr.nashani.musishare.Matches.MatchActivity;
 import fr.nashani.musishare.Player.PlayerActivity;
 import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
-import fr.nashani.musishare.User.LoginActivity;
 import fr.nashani.musishare.User.ProfileActivity;
 
 
@@ -201,6 +200,7 @@ public class MainActivity extends Activity {
                         String lastTrackArtists = "none";
                         String lastTrackAlbumName = "none";
                         String lastTrackAlbumCoverURL = "default";
+
 
                         dataSnapshot.child("profileImageUrl").getValue();
 

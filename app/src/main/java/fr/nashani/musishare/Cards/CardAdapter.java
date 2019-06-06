@@ -44,7 +44,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
 
         switch (cardItem.getProfileImageUrl()){
             case "default" :
-                image.setImageResource(R.drawable.ic_person_black_24dp);
+                image.setImageResource(R.drawable.music_note);
             break;
 
             default:
