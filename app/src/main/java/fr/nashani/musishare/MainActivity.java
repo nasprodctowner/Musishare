@@ -50,8 +50,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        PlayerActivity.interrupt = false;
-
         //get all users
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -147,11 +145,6 @@ public class MainActivity extends Activity {
 
     }
 
-    public void connectToPlayer(View view) {
-        Intent intent = new Intent(this, PlayerActivity.class);
-        startActivity(intent);
-    }
-
 
     public void checkUserSex(){
 
@@ -205,6 +198,7 @@ public class MainActivity extends Activity {
                         String lastTrackAlbumName = "none";
                         String lastTrackAlbumCoverURL = "default";
 
+
                         dataSnapshot.child("profileImageUrl").getValue();
 
                         if(dataSnapshot.child("profileImageUrl").getValue() != null)
@@ -247,15 +241,18 @@ public class MainActivity extends Activity {
     }
 
 
+    public void connectToPlayer(View view) {
+        Intent intent = new Intent(this, PlayerActivity.class);
+        startActivity(intent);
+    }
+
     public void logOutUser (View view){
-            PlayerActivity.interrupt = true;
             mAuth.signOut();
             Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-
 
     public void goToProfile(View view) {
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
