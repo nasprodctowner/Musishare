@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,6 +57,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class ProfileActivity extends Activity {
 
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
     private EditText mNameField, mPhoneField;
     private TextView coords, address;
     private ImageView mProfileImage;
@@ -88,7 +90,7 @@ public class ProfileActivity extends Activity {
         btnGPSShowLocation = findViewById(R.id.btnGPSShowLocation);
         btnShowAddress = findViewById(R.id.btnShowAddress);
         client = LocationServices.getFusedLocationProviderClient(this);
-        requestPermission();
+        // requestPermission();
 
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -136,23 +138,66 @@ public class ProfileActivity extends Activity {
         });
 
         btnShowAddress.setOnClickListener(arg0 -> {
-            if (ActivityCompat.checkSelfPermission(ProfileActivity.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            client.getLastLocation().addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        LocationAddress locationAddress = new LocationAddress();
-                        locationAddress.getAddressFromLocation(latitude, longitude,
-                                getApplicationContext(), new GeocoderHandler());
-                    } else {
-                        showSettingsAlert();
-                    }
+            if (ContextCompat.checkSelfPermission(ProfileActivity.this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Permission is not granted
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(ProfileActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                    new android.support.v7.app.AlertDialog.Builder(this)
+                            .setTitle("Required Location Permission")
+                            .setMessage("You have to give this permission to acess this feature")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ActivityCompat.requestPermissions(ProfileActivity.this,
+                                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                            MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .create()
+                            .show();
+
+
+                } else {
+                    // No explanation needed; request the permission
+                    ActivityCompat.requestPermissions(ProfileActivity.this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
                 }
-            });
+            } else {
+                // Permission has already been granted
+                client.getLastLocation().addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            LocationAddress locationAddress = new LocationAddress();
+                            locationAddress.getAddressFromLocation(latitude, longitude,
+                                    getApplicationContext(), new GeocoderHandler());
+                        } else {
+                            showSettingsAlert();
+                        }
+                    }
+                });
+            }
         });
 
     }
