@@ -31,17 +31,7 @@
         android:id="@+id/userProfilePhone"
         android:layout_marginBottom="20sp"
         android:inputType="number"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:id="@+id/btnGPSShowLocation"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Coordinates here!"
-        android:id="@+id/coords"
-        android:layout_marginBottom="10dp"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

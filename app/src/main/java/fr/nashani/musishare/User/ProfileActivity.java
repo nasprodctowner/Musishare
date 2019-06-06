@@ -59,14 +59,15 @@ public class ProfileActivity extends Activity {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
     private EditText mNameField, mPhoneField;
-    private TextView coords, address;
+    private TextView address;
     private ImageView mProfileImage;
-    private Button mBack, mConfirm, btnGPSShowLocation, btnShowAddress;
-    AppLocationService appLocationService;
+    private Button mBack, mConfirm, btnShowAddress;
+    // AppLocationService appLocationService;
     private DatabaseReference userDB;
     private FusedLocationProviderClient client;
+    private double latitude ,longitude;
 
-    private String userId, name, phone, profileImageURL, userSex;
+    private String userId, name, phone, profileImageURL, userSex, locationAddress;
 
     private Uri resultUri;
 
@@ -85,9 +86,7 @@ public class ProfileActivity extends Activity {
         mConfirm = findViewById(R.id.profile_confirm);
 
         // Location
-        coords = findViewById(R.id.coords);
         address = findViewById(R.id.address);
-        btnGPSShowLocation = findViewById(R.id.btnGPSShowLocation);
         btnShowAddress = findViewById(R.id.btnShowAddress);
         client = LocationServices.getFusedLocationProviderClient(this);
         // requestPermission();
@@ -112,30 +111,7 @@ public class ProfileActivity extends Activity {
             return;
         });
 
-        // **************************************************** //
-
-        appLocationService = new AppLocationService(
-                ProfileActivity.this);
-
-        btnGPSShowLocation.setOnClickListener(arg0 -> {
-            if (ActivityCompat.checkSelfPermission(ProfileActivity.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            client.getLastLocation().addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        String result = "Latitude: " + location.getLatitude() +
-                                " Longitude: " + location.getLongitude();
-                        coords.setText(result);
-                    } else {
-                        showSettingsAlert();
-                    }
-                }
-            });
-        });
+        // Get Address From location GPS
 
         btnShowAddress.setOnClickListener(arg0 -> {
             if (ContextCompat.checkSelfPermission(ProfileActivity.this,
@@ -187,8 +163,8 @@ public class ProfileActivity extends Activity {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
+                             latitude = location.getLatitude();
+                             longitude = location.getLongitude();
                             LocationAddress locationAddress = new LocationAddress();
                             locationAddress.getAddressFromLocation(latitude, longitude,
                                     getApplicationContext(), new GeocoderHandler());
@@ -225,7 +201,7 @@ public class ProfileActivity extends Activity {
     private class GeocoderHandler extends Handler {
         @Override
         public void handleMessage(Message message) {
-            String locationAddress;
+
             switch (message.what) {
                 case 1:
                     Bundle bundle = message.getData();
@@ -289,6 +265,9 @@ public class ProfileActivity extends Activity {
         Map<String, Object> userInformation = new HashMap<String, Object>();
         userInformation.put("name",name);
         userInformation.put("phone",phone);
+        userInformation.put("latitude",latitude);
+        userInformation.put("longitude",longitude);
+        userInformation.put("address",locationAddress);
 
         userDB.updateChildren(userInformation);
 
