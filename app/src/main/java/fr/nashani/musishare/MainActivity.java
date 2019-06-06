@@ -27,6 +27,7 @@ import fr.nashani.musishare.Cards.CardAdapter;
 import fr.nashani.musishare.Matches.MatchActivity;
 import fr.nashani.musishare.Player.PlayerActivity;
 import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
+import fr.nashani.musishare.User.LoginActivity;
 import fr.nashani.musishare.User.ProfileActivity;
 
 
@@ -256,7 +257,6 @@ public class MainActivity extends Activity {
             finish();
             return;
         }
-
 
     public void goToProfile(View view) {
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
