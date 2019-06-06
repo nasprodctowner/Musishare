@@ -32,6 +32,18 @@
         android:layout_marginBottom="20sp"
         android:inputType="number"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:id="@+id/btnShowAddress"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Coordinates here!"
+        android:id="@+id/address"
+        android:layout_marginBottom="10dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

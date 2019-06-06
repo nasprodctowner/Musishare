@@ -2,16 +2,11 @@ package fr.nashani.musishare.User;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,9 +16,12 @@ import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,27 +32,41 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.location.Location;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
+
+
 import fr.nashani.musishare.R;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class ProfileActivity extends Activity {
 
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
     private EditText mNameField, mPhoneField;
+    private TextView address;
     private ImageView mProfileImage;
-    private Button mBack, mConfirm;
-
+    private Button mBack, mConfirm, btnShowAddress;
+    // AppLocationService appLocationService;
     private DatabaseReference userDB;
+    private FusedLocationProviderClient client;
+    private double latitude ,longitude;
 
-    private String userId, name, phone, profileImageURL, userSex;
+    private String userId, name, phone, profileImageURL, userSex, locationAddress;
 
     private Uri resultUri;
 
     private static final int MY_PERMISSIONS_REQUEST_READ = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +79,25 @@ public class ProfileActivity extends Activity {
         mBack = findViewById(R.id.profile_back);
         mConfirm = findViewById(R.id.profile_confirm);
 
+        // Location
+        address = findViewById(R.id.address);
+        btnShowAddress = findViewById(R.id.btnShowAddress);
+        client = LocationServices.getFusedLocationProviderClient(this);
+        // requestPermission();
+
+
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
         getUserInfo();
         mProfileImage.setOnClickListener(v -> {
+
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, 1);
+
             isReadFromStoragePermitted();
+
 
         });
 
@@ -85,6 +110,107 @@ public class ProfileActivity extends Activity {
             return;
         });
 
+        // Get Address From location GPS
+
+        btnShowAddress.setOnClickListener(arg0 -> {
+            if (ContextCompat.checkSelfPermission(ProfileActivity.this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Permission is not granted
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(ProfileActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                    new android.support.v7.app.AlertDialog.Builder(this)
+                            .setTitle("Required Location Permission")
+                            .setMessage("You have to give this permission to acess this feature")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ActivityCompat.requestPermissions(ProfileActivity.this,
+                                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                            MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .create()
+                            .show();
+
+
+                } else {
+                    // No explanation needed; request the permission
+                    ActivityCompat.requestPermissions(ProfileActivity.this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            } else {
+                // Permission has already been granted
+                client.getLastLocation().addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                             latitude = location.getLatitude();
+                             longitude = location.getLongitude();
+                            LocationAddress locationAddress = new LocationAddress();
+                            locationAddress.getAddressFromLocation(latitude, longitude,
+                                    getApplicationContext(), new GeocoderHandler());
+                        } else {
+                            showSettingsAlert();
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void requestPermission () {
+        ActivityCompat.requestPermissions(ProfileActivity.this, new String[] {ACCESS_FINE_LOCATION} , 1);
+    }
+
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ProfileActivity.this);
+        alertDialog.setTitle("SETTINGS");
+        alertDialog.setMessage("Enable Location Provider! Go to settings menu?");
+        alertDialog.setPositiveButton("Settings",
+                (dialog, which) -> {
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ProfileActivity.this.startActivity(intent);
+                });
+        alertDialog.setNegativeButton("Cancel",
+                (dialog, which) -> dialog.cancel());
+        alertDialog.show();
+    }
+
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    locationAddress = bundle.getString("address");
+                    break;
+                default:
+                    locationAddress = null;
+            }
+            address.setText(locationAddress);
+        }
     }
 
     private void getUserInfo() {
@@ -138,6 +264,9 @@ public class ProfileActivity extends Activity {
         Map<String, Object> userInformation = new HashMap<String, Object>();
         userInformation.put("name",name);
         userInformation.put("phone",phone);
+        userInformation.put("latitude",latitude);
+        userInformation.put("longitude",longitude);
+        userInformation.put("address",locationAddress);
 
         userDB.updateChildren(userInformation);
 
