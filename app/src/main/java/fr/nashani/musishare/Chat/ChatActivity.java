@@ -27,7 +27,12 @@ import java.util.Map;
 
 import fr.nashani.musishare.R;
 
+/**
+ * The type Chat activity.
+ */
 public class ChatActivity extends AppCompatActivity {
+
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mChatAdapter;
     private RecyclerView.LayoutManager mChatLayoutManager;
@@ -35,7 +40,13 @@ public class ChatActivity extends AppCompatActivity {
     private String currentUserID, matchId, chatId;
     private EditText mSendEditText;
     private Button mSendButton;
-    DatabaseReference mDatabaseUser, mDatabaseChat;
+    /**
+     * The M database user.
+     */
+    DatabaseReference mDatabaseUser, /**
+     * The M database chat.
+     */
+    mDatabaseChat;
 
 
 
@@ -45,7 +56,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         FirebaseStorage db = FirebaseStorage.getInstance();
-
+        // We Got the matchId from MatchesViewHolders where we send it as a String
         matchId = getIntent().getExtras().getString("matchId");
 
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -55,6 +66,7 @@ public class ChatActivity extends AppCompatActivity {
 
         getChatId();
 
+        // Create Chat view by using ReceyclerView
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setHasFixedSize(false);
@@ -85,8 +97,9 @@ public class ChatActivity extends AppCompatActivity {
         String sendMessageText = mSendEditText.getText().toString();
 
         if(!sendMessageText.isEmpty()){
+            // we push new child with matchId in Chat DB reference
             DatabaseReference newMessageDb = mDatabaseChat.push();
-
+            // inside this child we place a user text (msg) and his ID
             Map newMessage = new HashMap();
             newMessage.put("createdByUser", currentUserID);
             newMessage.put("text", sendMessageText);

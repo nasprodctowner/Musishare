@@ -12,9 +12,18 @@ import com.google.firebase.auth.FirebaseUser;
 import fr.nashani.musishare.MainActivity;
 import fr.nashani.musishare.R;
 
+/**
+ * The type Choose login registration activity.
+ */
 public class ChooseLoginRegistrationActivity extends Activity {
 
-    Button mLogin, mRegister;
+    /**
+     * The M login.
+     */
+    Button mLogin, /**
+     * The M register.
+     */
+    mRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

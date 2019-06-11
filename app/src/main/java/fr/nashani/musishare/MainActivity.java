@@ -131,7 +131,7 @@ public class MainActivity extends Activity {
                     String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
 
-                    // create unique chat ID
+                    // create unique chat ID in match child
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
                 }

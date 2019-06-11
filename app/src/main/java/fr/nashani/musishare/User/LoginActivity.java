@@ -15,6 +15,9 @@ import com.google.firebase.auth.FirebaseUser;
 import fr.nashani.musishare.MainActivity;
 import fr.nashani.musishare.R;
 
+/**
+ * The type Login activity.
+ */
 public class LoginActivity extends Activity {
 
     private Button mLogin;
