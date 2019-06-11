@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,6 +46,7 @@ import android.os.Message;
 import android.provider.Settings;
 
 
+import fr.nashani.musishare.MainActivity;
 import fr.nashani.musishare.R;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -64,17 +66,20 @@ public class ProfileActivity extends Activity {
     private FusedLocationProviderClient client;
     private double latitude ,longitude;
 
-    private String userId, name, phone, profileImageURL, userSex, locationAddress;
+    private String userId, name, age, profileImageURL, userSex, locationAddress;
 
     private Uri resultUri;
 
     private static final int MY_PERMISSIONS_REQUEST_READ = 0;
+    private FirebaseAuth mAuth ;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        mAuth = FirebaseAuth.getInstance();
 
         mNameField = findViewById(R.id.userProfileName);
         mPhoneField = findViewById(R.id.userProfilePhone);
@@ -87,8 +92,6 @@ public class ProfileActivity extends Activity {
         btnShowAddress = findViewById(R.id.btnShowAddress);
         client = LocationServices.getFusedLocationProviderClient(this);
         // requestPermission();
-
-
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
@@ -230,8 +233,8 @@ public class ProfileActivity extends Activity {
                         name = map.get("name").toString();
                         mNameField.setText(name);
                     }
-                    if (map.get("phone") != null){
-                        name = map.get("phone").toString();
+                    if (map.get("age") != null){
+                        name = map.get("age").toString();
                         mPhoneField.setText(name);
                     }
 
@@ -265,11 +268,11 @@ public class ProfileActivity extends Activity {
 
     private void saveUserInformation(){
         name = mNameField.getText().toString();
-        phone = mPhoneField.getText().toString();
+        age = mPhoneField.getText().toString();
 
         Map<String, Object> userInformation = new HashMap<String, Object>();
         userInformation.put("name",name);
-        userInformation.put("phone",phone);
+        userInformation.put("age", age);
         userInformation.put("latitude",latitude);
         userInformation.put("longitude",longitude);
         userInformation.put("address",locationAddress);
@@ -373,6 +376,19 @@ public class ProfileActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent,1);
+    }
+
+    /**
+     * Logout user.
+     *
+     * @param view the view
+     */
+    public void logOutUser (View view){
+        mAuth.signOut();
+        Intent intent = new Intent(ProfileActivity.this, ChooseLoginRegistrationActivity.class);
+        startActivity(intent);
+        finish();
+        return;
     }
 
 }
