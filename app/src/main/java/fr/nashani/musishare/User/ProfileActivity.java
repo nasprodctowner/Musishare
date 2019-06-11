@@ -51,6 +51,9 @@ import fr.nashani.musishare.R;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+/**
+ * The type Profile activity.
+ */
 public class ProfileActivity extends Activity {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
@@ -184,6 +187,9 @@ public class ProfileActivity extends Activity {
         ActivityCompat.requestPermissions(ProfileActivity.this, new String[] {ACCESS_FINE_LOCATION} , 1);
     }
 
+    /**
+     * Show settings alert.
+     */
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(
                 ProfileActivity.this);
@@ -314,7 +320,9 @@ public class ProfileActivity extends Activity {
     }
 
 
-
+    /**
+     * Is read from storage permitted.
+     */
     public void isReadFromStoragePermitted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(this,

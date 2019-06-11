@@ -11,11 +11,25 @@ import android.widget.TextView;
 
 import fr.nashani.musishare.R;
 
+/**
+ * The type Chat view holders.
+ */
 public class ChatViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
+    /**
+     * The M message.
+     */
     public TextView mMessage;
+    /**
+     * The M container.
+     */
     public LinearLayout mContainer;
 
 
+    /**
+     * Instantiates a new Chat view holders.
+     *
+     * @param itemView the item view
+     */
     public ChatViewHolders(@NonNull View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);

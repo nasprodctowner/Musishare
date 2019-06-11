@@ -20,6 +20,9 @@ import java.util.Map;
 import fr.nashani.musishare.MainActivity;
 import fr.nashani.musishare.R;
 
+/**
+ * The type Registration activity.
+ */
 public class RegistrationActivity extends Activity {
 
     private Button mRegister;
@@ -79,8 +82,8 @@ public class RegistrationActivity extends Activity {
             final String password = mPassword.getText().toString();
             final String name = mName.getText().toString();
 
+            // Create a new count
             final String sex = mSexChoice.getText().toString();
-
                 mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegistrationActivity.this, task -> {
                     if(!task.isSuccessful()) {
                         Toast.makeText(RegistrationActivity.this,"Signup error",Toast.LENGTH_SHORT).show();

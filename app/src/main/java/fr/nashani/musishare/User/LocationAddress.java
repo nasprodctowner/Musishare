@@ -12,9 +12,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The type Location address.
+ */
 public class LocationAddress {
     private static final String TAG = "LocationAddress";
 
+    /**
+     * Gets address from location.
+     *
+     * @param latitude  the latitude
+     * @param longitude the longitude
+     * @param context   the context
+     * @param handler   the handler
+     */
     public static void getAddressFromLocation(final double latitude, final double longitude,
                                               final Context context, final Handler handler) {
         Thread thread = new Thread() {

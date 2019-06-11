@@ -139,8 +139,8 @@ public class MainActivity extends Activity {
                     FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
                     String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
-
                     // Créer un uid pour le chat
+
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
                 }
