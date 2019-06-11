@@ -16,11 +16,20 @@ import java.util.List;
 
 import fr.nashani.musishare.R;
 
+/**
+ * The type Chat adapter.
+ */
 public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders>  {
 
     private List<ChatObject> chatList;
     private Context context;
 
+    /**
+     * Instantiates a new Chat adapter.
+     *
+     * @param matchesList the matches list
+     * @param context     the context
+     */
     public ChatAdapter(ArrayList<ChatObject> matchesList, Context context){
         this.chatList = matchesList;
         this.context = context;
