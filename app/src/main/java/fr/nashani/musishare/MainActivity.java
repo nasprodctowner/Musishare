@@ -26,7 +26,6 @@ import fr.nashani.musishare.Cards.Card;
 import fr.nashani.musishare.Cards.CardAdapter;
 import fr.nashani.musishare.Matches.MatchActivity;
 import fr.nashani.musishare.Player.PlayerActivity;
-import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
 import fr.nashani.musishare.User.ProfileActivity;
 
 
@@ -95,12 +94,9 @@ public class MainActivity extends Activity {
             //Swip à gauche
             @Override
             public void onLeftCardExit(Object dataObject) {
-
                 Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
-
                 usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
-                Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
             }
 
             // Supprimer à droite
@@ -108,10 +104,8 @@ public class MainActivity extends Activity {
             public void onRightCardExit(Object dataObject) {
                 Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
-
                 usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
                 isConnectionMatch(userId);
-                Toast.makeText(MainActivity.this, "Right!",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -282,19 +276,6 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, PlayerActivity.class);
         startActivity(intent);
     }
-
-    /**
-     * Logout user.
-     *
-     * @param view the view
-     */
-    public void logOutUser (View view){
-            mAuth.signOut();
-            Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
 
     /**
      * Go to profile.
