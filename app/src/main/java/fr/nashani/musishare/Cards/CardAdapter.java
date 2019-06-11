@@ -39,11 +39,13 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TextView trackName = convertView.findViewById(R.id.name);
         TextView TrackArtist = convertView.findViewById(R.id.trackArtist);
         TextView TrackAlbum = convertView.findViewById(R.id.trackAlbum);
+        TextView address = convertView.findViewById(R.id.address);
 
         name.setText(cardItem.getName());
         trackName.setText(cardItem.getTrackName());
         TrackArtist.setText(cardItem.getTrackArtist());
         TrackAlbum.setText(cardItem.getTrackAlbum());
+        address.setText(cardItem.getAddress());
 
         /*
           Utilisation d'une librairie Glide pour peupler une imageView

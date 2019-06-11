@@ -42,9 +42,10 @@ public class LocationAddress {
                         for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
                             sb.append(address.getAddressLine(i)).append(", ");
                         }
-                        sb.append(address.getLocality()).append(", ");
-                        sb.append(address.getPostalCode()).append(", ");
-                        sb.append(address.getCountryName());
+                        sb.append(address.getLocality());
+                        // sb.append(address.getLocality()).append(", ");
+                        // sb.append(address.getPostalCode()).append(", ");
+                        // sb.append(address.getCountryName());
                         result = sb.toString();
                     }
                 } catch (IOException e) {
@@ -56,6 +57,7 @@ public class LocationAddress {
                         message.what = 1;
                         Bundle bundle = new Bundle();
                         bundle.putString("address", result);
+                        Log.i("hello" , result);
                         message.setData(bundle);
                     } else {
                         message.what = 1;
