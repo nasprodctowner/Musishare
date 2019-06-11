@@ -221,6 +221,7 @@ public class MainActivity extends Activity {
                         String lastTrackArtists = "none";
                         String lastTrackAlbumName = "none";
                         String lastTrackAlbumCoverURL = "default";
+                        String address = "none";
 
 
                         dataSnapshot.child("profileImageUrl").getValue();
@@ -244,7 +245,10 @@ public class MainActivity extends Activity {
                             /*
                             Mise à jour de la liste des cartes
                              */
-                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl);
+                            if (dataSnapshot.child("address").getValue() != null) {
+                                address = dataSnapshot.child("address").getValue().toString();
+                            }
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl, address);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
