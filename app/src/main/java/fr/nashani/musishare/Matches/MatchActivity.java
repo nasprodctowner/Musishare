@@ -18,6 +18,9 @@ import java.util.List;
 
 import fr.nashani.musishare.R;
 
+/**
+ * The type Match activity.
+ */
 public class MatchActivity extends Activity {
 
     private RecyclerView mRecyclerView;
@@ -36,7 +39,9 @@ public class MatchActivity extends Activity {
 
         mRecyclerView = findViewById(R.id.matches_recyclerView);
 
-        //Pour scroller librement
+        /*
+        Pour scroller librement
+         */
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setHasFixedSize(true);
 
@@ -52,6 +57,9 @@ public class MatchActivity extends Activity {
 
     }
 
+    /**
+     * Récupérer les id des Matchs de l'utilsateur
+     */
     private void getUserMatchId() {
         DatabaseReference matchDB = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("matches");
         matchDB.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -70,6 +78,11 @@ public class MatchActivity extends Activity {
             }
         });
     }
+
+    /**
+     * Récupérer Récupérer les informations des matchs et les afficher en mettant à jour l'adapter
+     * @param key
+     */
 
     private void fetchMatchInformation(String key) {
         DatabaseReference userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(key);
@@ -108,7 +121,9 @@ public class MatchActivity extends Activity {
 
     }
 
-
+    /**
+     * Récupérer la liste des matchs
+     */
     private List<Match> getDatSetMatches() {
         return resultMatches;
     }

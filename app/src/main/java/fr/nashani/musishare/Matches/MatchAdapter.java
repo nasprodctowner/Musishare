@@ -14,11 +14,20 @@ import java.util.List;
 
 import fr.nashani.musishare.R;
 
+/**
+ * The type Match adapter.
+ */
 public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolders>  {
 
     private List<Match> matchesList;
     private Context context;
 
+    /**
+     * Instantiates a new Match adapter.
+     *
+     * @param matchesList the matches list
+     * @param context     the context
+     */
     public MatchAdapter(List<Match> matchesList, Context context){
         this.matchesList = matchesList;
         this.context = context;
@@ -30,8 +39,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolders>  {
 
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-
-        View  layoutView = inflater.inflate(R.layout.item_match,null,false);
+        View layoutView = inflater.inflate(R.layout.item_match,null,false);
 
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -44,6 +52,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolders>  {
     public void onBindViewHolder(@NonNull MatchViewHolders holder, int i) {
 
         holder.mMatchId.setText(matchesList.get(i).getUserId());
+        holder.mMatchId.setVisibility(View.GONE);
         holder.mMatchName.setText("Name : "+matchesList.get(i).getName());
         holder.mtrackName.setText("Last playing track : "+matchesList.get(i).getTrackName());
 

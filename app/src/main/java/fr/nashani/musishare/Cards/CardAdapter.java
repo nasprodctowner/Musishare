@@ -7,17 +7,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
 import java.util.List;
-
 import fr.nashani.musishare.R;
 
+/**
+ * The type Card adapter.
+ */
 public class CardAdapter extends ArrayAdapter<Card> {
 
-    Context context;
-
+    /**
+     * Instantiates a new Card adapter.
+     *
+     * @param context the context
+     * @param items   the items
+     */
     public CardAdapter(Context context ,  List<Card> items) {
         super(context , 0 , items);
     }
@@ -28,6 +32,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent , false);
         }
+
         TextView name = convertView.findViewById(R.id.userName);
         ImageView image = convertView.findViewById(R.id.userImage);
         ImageView imageAlbum = convertView.findViewById(R.id.imageAlbum);
@@ -40,6 +45,9 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TrackArtist.setText(cardItem.getTrackArtist());
         TrackAlbum.setText(cardItem.getTrackAlbum());
 
+        /*
+          Utilisation d'une librairie Glide pour peupler une imageView
+         */
         Glide.with(convertView.getContext()).load(cardItem.getTrackAlbumCover()).into(imageAlbum);
 
         switch (cardItem.getProfileImageUrl()){
@@ -52,8 +60,6 @@ public class CardAdapter extends ArrayAdapter<Card> {
             break;
 
         }
-
-
         return convertView;
     }
 
