@@ -48,8 +48,4 @@ public class ChooseLoginRegistrationActivity extends Activity {
             return;
         });
     }
-
-
-
-
-}
+    }

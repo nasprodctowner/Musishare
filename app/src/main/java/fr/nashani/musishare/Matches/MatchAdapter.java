@@ -54,13 +54,11 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolders>  {
         holder.mMatchId.setText(matchesList.get(i).getUserId());
         holder.mMatchId.setVisibility(View.GONE);
         holder.mMatchName.setText("Name : "+matchesList.get(i).getName());
-        holder.mtrackName.setText("Last playing track : "+matchesList.get(i).getTrackName());
+        holder.mtrackName.setText("Last played track : "+matchesList.get(i).getTrackName());
 
         if(!matchesList.get(i).getProfileImageUrl().equals("default")){
             Glide.with(context).load(matchesList.get(i).getProfileImageUrl()).into(holder.matchImage);
         }
-
-
     }
 
     @Override
