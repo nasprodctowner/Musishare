@@ -30,14 +30,19 @@ import fr.nashani.musishare.User.ChooseLoginRegistrationActivity;
 import fr.nashani.musishare.User.ProfileActivity;
 
 
+/**
+ * The type Main activity.
+ */
 public class MainActivity extends Activity {
 
     private CardAdapter CardAdapter;
+    /**
+     * The Row items.
+     */
     List<Card> rowItems;
 
     private String currentUId;
-    private DatabaseReference userDB;
-    private DatabaseReference usersDB, chatDB;
+    private DatabaseReference usersDB;
 
     private FirebaseAuth mAuth;
 
@@ -50,10 +55,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //get all users
+        /*
+        Récupérer tous les utilisateurs
+         */
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
+
+        /*
+        Récupérer l'uid de l'utilisateur connecté
+         */
         currentUId = mAuth.getCurrentUser().getUid();
 
         checkUserSex();
@@ -63,24 +74,28 @@ public class MainActivity extends Activity {
         CardAdapter = new CardAdapter(this,rowItems);
 
 
+        /*
+        Initiation de la liste des cartes
+         */
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
         flingContainer.setAdapter(CardAdapter);
 
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+
+            // Supprimer le premier object de la liste
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
+
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
                 CardAdapter.notifyDataSetChanged();
             }
 
+            //Swip à gauche
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
+
                 Card obj = (Card) dataObject;
                 String userId = obj.getUserId();
 
@@ -88,6 +103,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "Left!",Toast.LENGTH_SHORT).show();
             }
 
+            // Supprimer à droite
             @Override
             public void onRightCardExit(Object dataObject) {
                 Card obj = (Card) dataObject;
@@ -107,17 +123,14 @@ public class MainActivity extends Activity {
 
             }
         });
-
-
-        flingContainer.setOnItemClickListener((itemPosition, dataObject) -> {
-
-             Toast.makeText(MainActivity.this, "Clicked!!",Toast.LENGTH_SHORT).show();
-        });
-
-
-
     }
 
+
+    /**
+     * Cette méthode sert à savoir si un utilisateur a un match avec un autre utilisateur en prenant un userID en paramètre
+     *
+     * @param userId
+     */
     private void isConnectionMatch(String userId) {
         DatabaseReference currentUserConnectionsDb = usersDB.child(currentUId).child("connections").child("yeps").child(userId);
         currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -126,12 +139,14 @@ public class MainActivity extends Activity {
                 if (dataSnapshot.exists()){
                     Toast.makeText(MainActivity.this,"new matching", Toast.LENGTH_LONG).show();
 
-                    // Create a child inside Chat with new id key
+                    /*
+                    Créer un child à l'interieur de Chat avec un nouvel id
+                      */
                     FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
                     String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
 
-                    // create unique chat ID
+                    // Créer un uid pour le chat
                     usersDB.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("chatId").setValue(key);
                     usersDB.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("chatId").setValue(key);
                 }
@@ -146,6 +161,9 @@ public class MainActivity extends Activity {
     }
 
 
+    /**
+     * Check le user pou savoir s'il est un homme ou une femme
+     */
     public void checkUserSex(){
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -178,6 +196,9 @@ public class MainActivity extends Activity {
 
     }
 
+    /**
+     * Récupérer les utilisateurs ayant le sexe opposé à l'utilisateur connecté
+     */
     public void getOppositeSexUsers(){
 
         usersDB.addChildEventListener(new ChildEventListener() {
@@ -192,6 +213,9 @@ public class MainActivity extends Activity {
                             && dataSnapshot.child("sex").getValue().toString().equals(oppositeUserSex)){
 
 
+                        /*
+                        Setter des valeurs par défaut
+                         */
                         String profileImageUrl = "default";
                         String lastTrackName = "none";
                         String lastTrackArtists = "none";
@@ -216,6 +240,10 @@ public class MainActivity extends Activity {
                             }
 
                         if(dataSnapshot.child("name").getValue() != null){
+
+                            /*
+                            Mise à jour de la liste des cartes
+                             */
                             Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
@@ -241,11 +269,21 @@ public class MainActivity extends Activity {
     }
 
 
+    /**
+     * Connect to player.
+     *
+     * @param view the view
+     */
     public void connectToPlayer(View view) {
         Intent intent = new Intent(this, PlayerActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Logout user.
+     *
+     * @param view the view
+     */
     public void logOutUser (View view){
             mAuth.signOut();
             Intent intent = new Intent(MainActivity.this, ChooseLoginRegistrationActivity.class);
@@ -254,12 +292,22 @@ public class MainActivity extends Activity {
             return;
         }
 
+    /**
+     * Go to profile.
+     *
+     * @param view the view
+     */
     public void goToProfile(View view) {
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
         startActivity(intent);
         return;
     }
 
+    /**
+     * Go to matches.
+     *
+     * @param view the view
+     */
     public void goToMatches(View view) {
         Intent intent = new Intent(MainActivity.this, MatchActivity.class);
         startActivity(intent);

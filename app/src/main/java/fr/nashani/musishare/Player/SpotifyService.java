@@ -18,6 +18,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * The type Spotify service.
+ */
 public class SpotifyService {
 
     private Music music;
@@ -28,6 +31,13 @@ public class SpotifyService {
     private String mAccessToken;
     private Call mCall;
 
+    /**
+     * Instantiates a new Spotify service.
+     *
+     * @param music        the music
+     * @param trackId      the track id
+     * @param mAccessToken the m access token
+     */
     public SpotifyService(Music music, String trackId, String mAccessToken) {
         this.music = music;
         this.trackId = trackId;
@@ -35,6 +45,9 @@ public class SpotifyService {
         this.mAuth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * Gets track data from Spotify API.
+     */
     public void getTrackData() {
         if (mAccessToken == null) {
             return;
@@ -79,6 +92,10 @@ public class SpotifyService {
                         stringBuilder.append(artist.getString("name"));
                         stringBuilder.append(" , ");
                     }
+
+                    /*
+                    Construire une String avec le noms des artistes
+                     */
                     stringBuilder.setLength(stringBuilder.length() - 3);
                     String artists = stringBuilder.toString();
 
@@ -105,6 +122,11 @@ public class SpotifyService {
         });
     }
 
+    /**
+     * Sauvegarde la musique dans la base de donnée
+     *
+     * @param music
+     */
     private void saveTrackInTheDatabase(Music music){
 
 

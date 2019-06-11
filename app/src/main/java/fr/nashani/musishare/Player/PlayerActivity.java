@@ -27,23 +27,39 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import fr.nashani.musishare.R;
 
 
+/**
+ * The type Player activity.
+ */
 public class PlayerActivity extends Activity {
 
-    //Les informations propre à mon application
+    /**
+     * Les informations concernant l'application récupérés depuis le dashboard spotify developer
+     */
     private static final String CLIENT_ID = "d7188f7125b143b8b980134e5a1adcb1";
     private static final String REDIRECT_URI = "http://fr.nashani.musishare/callback";
     private SpotifyAppRemote mSpotifyAppRemote;
 
-    //Les codes des requetes
+    /**
+     * The constant AUTH_TOKEN_REQUEST_CODE.
+     */
     public static final int AUTH_TOKEN_REQUEST_CODE = 0x10;
+    /**
+     * The constant AUTH_CODE_REQUEST_CODE.
+     */
     public static final int AUTH_CODE_REQUEST_CODE = 0x11;
 
+    /**
+     * The Music.
+     */
     Music music;
 
     private TextView mTrackName, mTrackArtists, mtrackAlbumName, myPlayerInstruction;
     private ImageView mtrackAlbumCover;
 
     private FirebaseAuth mAuth;
+    /**
+     * The Current user db.
+     */
     DatabaseReference currentUserDB;
 
     private String mAccessToken;
@@ -55,6 +71,9 @@ public class PlayerActivity extends Activity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        /*
+          Ouvrir le Spotify de l'utilisateur pour l'authentifier afin de récupérer le Token
+         */
         final AuthenticationRequest request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN);
         AuthenticationClient.openLoginActivity(this, AUTH_TOKEN_REQUEST_CODE, request);
 
@@ -67,6 +86,36 @@ public class PlayerActivity extends Activity {
 
     }
 
+    /*
+    Quand Spotify est connecté, la méthode connected est appelé
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .showAuthView(true)
+                        .build();
+
+        SpotifyAppRemote.connect(this, connectionParams,
+                new Connector.ConnectionListener() {
+
+                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                        mSpotifyAppRemote = spotifyAppRemote;
+                        connected();
+                    }
+
+                    public void onFailure(Throwable throwable) {
+                        Log.e("MyActivity", throwable.getMessage(), throwable);
+                    }
+                });
+    }
+
+
+    /*
+     Peupler la vue de la dernière chanson écoutée en récupérant les informations depuis la base de donnée
+    */
     private void populateLastPlayingTrackView(){
 
         String userId = mAuth.getCurrentUser().getUid();
@@ -80,6 +129,10 @@ public class PlayerActivity extends Activity {
                     mTrackName.setText(dataSnapshot.child("trackName").getValue().toString());
                     mTrackArtists.setText(dataSnapshot.child("trackArtists").getValue().toString());
                     mtrackAlbumName.setText(dataSnapshot.child("trackAlbum").getValue().toString());
+
+                    /*
+                     * Appeler l'asyncTask SetAlbumCoverAsyncTask pour mettre à jour la cover
+                     */
                     SetAlbumCoverAsyncTask c = new SetAlbumCoverAsyncTask(mtrackAlbumCover);
                     c.execute(dataSnapshot.child("trackAlbumCoverURL").getValue().toString());
                 }else {
@@ -105,7 +158,9 @@ public class PlayerActivity extends Activity {
                 .build();
     }
 
-    //Get the token of the user
+    /*
+    Permet de récupérer le token après l'ouverture de l'activity de la connexion à Spotify
+    */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -119,35 +174,12 @@ public class PlayerActivity extends Activity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
 
-        SpotifyAppRemote.connect(this, connectionParams,
-                new Connector.ConnectionListener() {
-
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-                        // Now you can start interacting with App Remote
-                        connected();
-
-                    }
-
-                    public void onFailure(Throwable throwable) {
-                        Log.e("MyActivity", throwable.getMessage(), throwable);
-                    }
-                });
-    }
-
-
+    /*
+    Cette méthode sert à appeler la méthode getTrackData à chaque fois que le player change d'état (Musique suivante ou précédente)
+     */
     private void connected() {
-
-        // Subscribe to PlayerState
+        // Récupererl'état du player
         mSpotifyAppRemote.getPlayerApi()
                 .subscribeToPlayerState()
                 .setEventCallback(playerState -> {
@@ -155,12 +187,16 @@ public class PlayerActivity extends Activity {
 
                     if (track != null) {
 
-                        //get the track ID
+                        /*
+                        get the track ID
+                         */
                         StringBuilder trackUri = new StringBuilder(track.uri);
                         trackUri.delete(0,14);
                         String trackId = trackUri.toString();
 
-                        //call spotify service with the track id and the user's token
+                        /*
+                        call spotify service with the track id and the user's token
+                         */
                         music = new Music();
                         SpotifyService spotifyService = new SpotifyService(music,trackId,mAccessToken);
                         spotifyService.getTrackData();
