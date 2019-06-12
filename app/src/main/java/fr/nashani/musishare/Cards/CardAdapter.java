@@ -40,6 +40,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TextView TrackArtist = convertView.findViewById(R.id.trackArtist);
         TextView TrackAlbum = convertView.findViewById(R.id.trackAlbum);
         TextView address = convertView.findViewById(R.id.address);
+        ImageView adressIcon = convertView.findViewById(R.id.addressIcon);
 
         name.setText(cardItem.getName());
         trackName.setText(cardItem.getTrackName());
@@ -47,14 +48,29 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TrackAlbum.setText(cardItem.getTrackAlbum());
         address.setText(cardItem.getAddress());
 
+        if(cardItem.getAddress().equals("none") ){
+            adressIcon.setVisibility(View.GONE);
+            address.setVisibility(View.GONE);
+        }
+
         /*
           Utilisation d'une librairie Glide pour peupler une imageView
          */
-        Glide.with(convertView.getContext()).load(cardItem.getTrackAlbumCover()).into(imageAlbum);
+
+        switch (cardItem.getTrackAlbumCover()){
+            case "default" :
+                imageAlbum.setImageResource(R.drawable.music_note);
+                break;
+
+            default:
+                Glide.with(convertView.getContext()).load(cardItem.getTrackAlbumCover()).into(imageAlbum);
+                break;
+
+        }
 
         switch (cardItem.getProfileImageUrl()){
             case "default" :
-                image.setImageResource(R.drawable.music_note);
+                image.setImageResource(R.drawable.profile);
             break;
 
             default:

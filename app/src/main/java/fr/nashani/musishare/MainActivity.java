@@ -57,47 +57,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init();
-
-
-        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
-
-            // Supprimer le premier object de la liste
-            @Override
-            public void removeFirstObjectInAdapter() {
-
-                Log.d("LIST", "removed object!");
-                rowItems.remove(0);
-                CardAdapter.notifyDataSetChanged();
-            }
-
-            //Swip à gauche
-            @Override
-            public void onLeftCardExit(Object dataObject) {
-                Card obj = (Card) dataObject;
-                String userId = obj.getUserId();
-                usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
-            }
-
-            // Supprimer à droite
-            @Override
-            public void onRightCardExit(Object dataObject) {
-                Card obj = (Card) dataObject;
-                String userId = obj.getUserId();
-                usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
-                isConnectionMatch(userId);
-            }
-
-            @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) {
-            }
-
-            @Override
-            public void onScroll(float scrollProgressPercent) {
-
-            }
-        });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+        flingContainer.removeAllViewsInLayout();
+        CardAdapter.notifyDataSetChanged();
+    }
+
 
 
     /**
@@ -242,6 +211,7 @@ public class MainActivity extends Activity {
                         String lastTrackArtists = "none";
                         String lastTrackAlbumName = "none";
                         String lastTrackAlbumCoverURL = "default";
+                        String address = "none";
 
 
                         dataSnapshot.child("profileImageUrl").getValue();
@@ -265,7 +235,10 @@ public class MainActivity extends Activity {
                             /*
                             Mise à jour de la liste des cartes
                              */
-                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl);
+                            if (dataSnapshot.child("address").getValue() != null) {
+                                address = dataSnapshot.child("address").getValue().toString();
+                            }
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl,address);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
@@ -323,6 +296,9 @@ public class MainActivity extends Activity {
     }
 
 
+    /*
+    Sert à initier la vue des cartes
+     */
     private void init(){
 
         /*
@@ -345,16 +321,47 @@ public class MainActivity extends Activity {
          */
         flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         flingContainer.setAdapter(CardAdapter);
+
+
+        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+
+            // Supprimer le premier object de la liste
+            @Override
+            public void removeFirstObjectInAdapter() {
+
+                Log.d("LIST", "removed object!");
+                rowItems.remove(0);
+                CardAdapter.notifyDataSetChanged();
+            }
+
+            //Swip à gauche
+            @Override
+            public void onLeftCardExit(Object dataObject) {
+                Card obj = (Card) dataObject;
+                String userId = obj.getUserId();
+                usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
+            }
+
+            // Supprimer à droite
+            @Override
+            public void onRightCardExit(Object dataObject) {
+                Card obj = (Card) dataObject;
+                String userId = obj.getUserId();
+                usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
+                isConnectionMatch(userId);
+            }
+
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+            }
+
+            @Override
+            public void onScroll(float scrollProgressPercent) {
+
+            }
+        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        init();
-
-        flingContainer.removeAllViewsInLayout();
-        CardAdapter.notifyDataSetChanged();
-    }
 
     @Override
     protected void onStop() {

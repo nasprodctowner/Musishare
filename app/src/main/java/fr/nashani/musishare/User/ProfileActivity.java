@@ -270,7 +270,7 @@ public class ProfileActivity extends Activity {
                         profileImageURL = map.get("profileImageUrl").toString();
 
                         switch (profileImageURL){
-                            case "default" : mProfileImage.setImageResource(R.drawable.ic_person_black_24dp);
+                            case "default" : mProfileImage.setImageResource(R.drawable.profile);
 
                                 break;
 
