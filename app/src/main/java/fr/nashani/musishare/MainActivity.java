@@ -168,13 +168,15 @@ public class MainActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.exists()){
-                        if(dataSnapshot.child("sex").getValue() != null){
-                            userSex = dataSnapshot.child("sex").getValue().toString();
+                        if(dataSnapshot.child("sexToMatch").getValue() != null){
+                            userSex = dataSnapshot.child("sexToMatch").getValue().toString();
 
                             switch (userSex){
-                                case "Male" : oppositeUserSex = "Female";
+                                case "Male" : oppositeUserSex = "Male";
                                     break;
-                                case "Female" : oppositeUserSex = "Male";
+                                case "Female" : oppositeUserSex = "Female";
+                                    break;
+                                case "Both" : oppositeUserSex = "Both";
                                     break;
                             }
                             getOppositeSexUsers();
@@ -243,8 +245,48 @@ public class MainActivity extends Activity {
                             CardAdapter.notifyDataSetChanged();
                         }
 
-                    }
-                }
+                    }else if(dataSnapshot.exists()
+                            && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)
+                         ){
+
+
+                        /*
+                        Setter des valeurs par défaut
+                         */
+                        String profileImageUrl = "default";
+                        String lastTrackName = "none";
+                        String lastTrackArtists = "none";
+                        String lastTrackAlbumName = "none";
+                        String lastTrackAlbumCoverURL = "default";
+
+
+                        dataSnapshot.child("profileImageUrl").getValue();
+
+                        if(dataSnapshot.child("profileImageUrl").getValue() != null)
+                            if(!dataSnapshot.child("profileImageUrl").getValue().equals("default")){
+                                profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                            }
+
+
+                        if(dataSnapshot.child("LastPlayedTrack").child("trackId").getValue() != null)
+                            if(!dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().equals("none")){
+                                lastTrackName = dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().toString();
+                                lastTrackArtists = dataSnapshot.child("LastPlayedTrack").child("trackArtists").getValue().toString();
+                                lastTrackAlbumName = dataSnapshot.child("LastPlayedTrack").child("trackAlbum").getValue().toString();
+                                lastTrackAlbumCoverURL = dataSnapshot.child("LastPlayedTrack").child("trackAlbumCoverURL").getValue().toString();
+                            }
+
+                        if(dataSnapshot.child("name").getValue() != null){
+
+                            /*
+                            Mise à jour de la liste des cartes
+                             */
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl);
+                            rowItems.add(item);
+                            CardAdapter.notifyDataSetChanged();
+                        }
+                }}
             }
 
             @Override

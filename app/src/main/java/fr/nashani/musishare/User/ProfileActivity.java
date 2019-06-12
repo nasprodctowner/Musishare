@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -46,7 +48,6 @@ import android.os.Message;
 import android.provider.Settings;
 
 
-import fr.nashani.musishare.MainActivity;
 import fr.nashani.musishare.R;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -57,7 +58,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class ProfileActivity extends Activity {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
-    private EditText mNameField, mPhoneField;
+    private EditText mNameField, mAgeField;
     private TextView address;
     private ImageView mProfileImage;
     private Button mBack, mConfirm, btnShowAddress;
@@ -65,6 +66,7 @@ public class ProfileActivity extends Activity {
     private DatabaseReference userDB;
     private FusedLocationProviderClient client;
     private double latitude ,longitude;
+    private RadioGroup radio_sex_choice;
 
     private String userId, name, age, profileImageURL, userSex, locationAddress;
 
@@ -82,10 +84,11 @@ public class ProfileActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
 
         mNameField = findViewById(R.id.userProfileName);
-        mPhoneField = findViewById(R.id.userProfilePhone);
+        mAgeField = findViewById(R.id.userProfilePhone);
         mProfileImage = findViewById(R.id.userProfileImage);
         mBack = findViewById(R.id.profile_back);
         mConfirm = findViewById(R.id.profile_confirm);
+        radio_sex_choice = findViewById(R.id.radio_sexChoice);
 
         // Location
         address = findViewById(R.id.address);
@@ -183,10 +186,6 @@ public class ProfileActivity extends Activity {
 
     }
 
-    private void requestPermission () {
-        ActivityCompat.requestPermissions(ProfileActivity.this, new String[] {ACCESS_FINE_LOCATION} , 1);
-    }
-
     /**
      * Show settings alert.
      */
@@ -234,13 +233,14 @@ public class ProfileActivity extends Activity {
                         mNameField.setText(name);
                     }
                     if (map.get("age") != null){
-                        name = map.get("age").toString();
-                        mPhoneField.setText(name);
+                        age = map.get("age").toString();
+                        mAgeField.setText(age);
                     }
 
                     if (map.get("sex") != null){
                         userSex = map.get("sex").toString();
                     }
+
 
                     if (map.get("profileImageUrl") != null){
                         profileImageURL = map.get("profileImageUrl").toString();
@@ -268,7 +268,10 @@ public class ProfileActivity extends Activity {
 
     private void saveUserInformation(){
         name = mNameField.getText().toString();
-        age = mPhoneField.getText().toString();
+        age = mAgeField.getText().toString();
+        int selectId = radio_sex_choice.getCheckedRadioButtonId();
+
+        final RadioButton mSexChoice = findViewById(selectId);
 
         Map<String, Object> userInformation = new HashMap<String, Object>();
         userInformation.put("name",name);
@@ -276,6 +279,7 @@ public class ProfileActivity extends Activity {
         userInformation.put("latitude",latitude);
         userInformation.put("longitude",longitude);
         userInformation.put("address",locationAddress);
+        userInformation.put("sexToMatch",mSexChoice.getText().toString());
 
         userDB.updateChildren(userInformation);
 
