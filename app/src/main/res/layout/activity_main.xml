@@ -39,6 +39,14 @@
             android:layout_weight="1"
             android:textSize="10sp"
             android:text="Matches" />
+        <Button
+            android:id="@+id/map_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="goToMap"
+            android:layout_weight="1"
+            android:textSize="10sp"
+            android:text="show map" />
 
     </LinearLayout>
 

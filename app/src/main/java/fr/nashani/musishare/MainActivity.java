@@ -24,6 +24,7 @@ import java.util.List;
 
 import fr.nashani.musishare.Cards.Card;
 import fr.nashani.musishare.Cards.CardAdapter;
+import fr.nashani.musishare.Map.MapsActivity;
 import fr.nashani.musishare.Matches.MatchActivity;
 import fr.nashani.musishare.Player.PlayerActivity;
 import fr.nashani.musishare.User.ProfileActivity;
@@ -295,6 +296,12 @@ public class MainActivity extends Activity {
      */
     public void goToMatches(View view) {
         Intent intent = new Intent(MainActivity.this, MatchActivity.class);
+        startActivity(intent);
+        return;
+    }
+
+    public void goToMap(View view) {
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
         return;
     }
