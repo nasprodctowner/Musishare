@@ -5,5 +5,5 @@
     <color name="colorAccent">#4E4E4E</color>
     <color name="border_color">#FFFFFF</color>
     <color name="border_bg_color">#17000000</color>
-    <color name="loginButton">#C96363</color>
+    <color name="loginButton">#f36787</color>
 </resources>

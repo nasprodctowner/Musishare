@@ -14,6 +14,26 @@ public class Card {
     private String trackAlbumCover;
 
     /**
+     * Gets address.
+     *
+     * @return the address
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * Sets address.
+     *
+     * @param address the address
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    private String address;
+
+    /**
      * Instantiates a new Card.
      *
      * @param userId          the user id
@@ -38,7 +58,7 @@ public class Card {
      * @param trackAlbumCover the track album cover
      * @param profileImageUrl the profile image url
      */
-    public Card(String userId, String name, String trackName, String trackArtist, String trackAlbum, String trackAlbumCover, String profileImageUrl) {
+    public Card(String userId, String name, String trackName, String trackArtist, String trackAlbum, String trackAlbumCover, String profileImageUrl, String address) {
         this.userId = userId;
         this.name = name;
         this.trackName = trackName;
@@ -46,6 +66,7 @@ public class Card {
         this.trackAlbum = trackAlbum;
         this.profileImageUrl = profileImageUrl;
         this.trackAlbumCover = trackAlbumCover;
+        this.address = address;
     }
 
     /**
