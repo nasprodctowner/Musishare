@@ -47,10 +47,10 @@ Une fois Git installé, il suffit de suivre les instructions ci-dessous.
 Depuis Android studio : 
   File > Settings > Version Control > Git > Dans " path to git Excecutable ", coller le chemin du git.exe > OK
   
-#### Cloner le répertoire Lexify
+#### Cloner le répertoire Musishare
 
 Depuis Android studio : 
-  VCS > Checkout from version control > Git > Dans " Git Repository URL ", coller https://github.com/LexifyOrganization/Lexify.git > OK
+  VCS > Checkout from version control > Git > Dans " Git Repository URL ", coller https://github.com/nassimkhatir/Musishare.git > OK
   
 ####  Créer un compte Spotify Developer :
 
