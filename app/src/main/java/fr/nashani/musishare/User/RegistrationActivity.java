@@ -112,7 +112,7 @@ public class RegistrationActivity extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(RegistrationActivity.this,ChooseLoginRegistrationActivity.class);
+        Intent intent = new Intent(RegistrationActivity.this,LoginActivity.class);
         startActivity(intent);
         finish();
         return;
