@@ -72,8 +72,10 @@ public class PlayerActivity extends Activity {
 Suivre les instructions : https://firebase.google.com/docs/android/setup 
 
 Ne pas oublier d'ajouter le sha1 aussi.
+
+ ####  Lancement : 
  
- C'est parti ! 
+ Une fois l'application lancée, il faut créer au minmum deux comptes pour pouvoir profiter de toutes les fonctionnalités. 
 
 ## Auteurs
 * **KHATIR Nassim** - [Github](https://github.com/nassimkhatir)
