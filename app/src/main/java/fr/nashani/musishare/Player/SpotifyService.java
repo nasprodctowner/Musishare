@@ -152,7 +152,4 @@ public class SpotifyService {
             mCall.cancel();
         }
     }
-
-
-
 }

@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lorentzos.flingswipe.FlingCardListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -46,7 +47,9 @@ public class MainActivity extends Activity {
     private FirebaseAuth mAuth;
 
     private String userSex;
-    private String oppositeUserSex;
+    private String userSexPreference;
+
+    SwipeFlingAdapterView flingContainer;
 
 
     @Override
@@ -54,70 +57,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        Récupérer tous les utilisateurs
-         */
-        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
-
-        mAuth = FirebaseAuth.getInstance();
-
-        /*
-        Récupérer l'uid de l'utilisateur connecté
-         */
-        currentUId = mAuth.getCurrentUser().getUid();
-
-        checkUserSex();
-
-        rowItems = new ArrayList<Card>();
-
-        CardAdapter = new CardAdapter(this,rowItems);
-
-
-        /*
-        Initiation de la liste des cartes
-         */
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
-
-        flingContainer.setAdapter(CardAdapter);
-
-        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
-
-            // Supprimer le premier object de la liste
-            @Override
-            public void removeFirstObjectInAdapter() {
-
-                Log.d("LIST", "removed object!");
-                rowItems.remove(0);
-                CardAdapter.notifyDataSetChanged();
-            }
-
-            //Swip à gauche
-            @Override
-            public void onLeftCardExit(Object dataObject) {
-                Card obj = (Card) dataObject;
-                String userId = obj.getUserId();
-                usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
-            }
-
-            // Supprimer à droite
-            @Override
-            public void onRightCardExit(Object dataObject) {
-                Card obj = (Card) dataObject;
-                String userId = obj.getUserId();
-                usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
-                isConnectionMatch(userId);
-            }
-
-            @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) {
-            }
-
-            @Override
-            public void onScroll(float scrollProgressPercent) {
-
-            }
-        });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+        flingContainer.removeAllViewsInLayout();
+        CardAdapter.notifyDataSetChanged();
+    }
+
 
 
     /**
@@ -158,7 +107,7 @@ public class MainActivity extends Activity {
     /**
      * Check le user pou savoir s'il est un homme ou une femme
      */
-    public void checkUserSex(){
+    public void checkUserSexPreference(){
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userDB = usersDB.child(user.getUid());
@@ -168,13 +117,15 @@ public class MainActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.exists()){
-                        if(dataSnapshot.child("sex").getValue() != null){
-                            userSex = dataSnapshot.child("sex").getValue().toString();
+                        if(dataSnapshot.child("sexPreference").getValue() != null){
+                            userSex = dataSnapshot.child("sexPreference").getValue().toString();
 
                             switch (userSex){
-                                case "Male" : oppositeUserSex = "Female";
+                                case "Male" : userSexPreference = "Male";
                                     break;
-                                case "Female" : oppositeUserSex = "Male";
+                                case "Female" : userSexPreference = "Female";
+                                    break;
+                                case "Both" : userSexPreference = "Both";
                                     break;
                             }
                             getOppositeSexUsers();
@@ -202,9 +153,10 @@ public class MainActivity extends Activity {
 
                 if(dataSnapshot.child("sex").getValue() != null){
                     if(dataSnapshot.exists()
-                            && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
-                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)
-                            && dataSnapshot.child("sex").getValue().toString().equals(oppositeUserSex)){
+                            && (!dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId))
+                            && dataSnapshot.child("sex").getValue().toString().equals(userSexPreference)
+                            && !dataSnapshot.getKey().equals(currentUId)){
 
 
                         /*
@@ -243,6 +195,50 @@ public class MainActivity extends Activity {
                                 address = dataSnapshot.child("address").getValue().toString();
                             }
                             Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl, address);
+                            rowItems.add(item);
+                            CardAdapter.notifyDataSetChanged();
+                        }
+
+                    }else if(userSexPreference.equals("Both")
+                            && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)
+                            && !dataSnapshot.getKey().equals(currentUId)) {
+                                             /*
+                        Setter des valeurs par défaut
+                         */
+                        String profileImageUrl = "default";
+                        String lastTrackName = "none";
+                        String lastTrackArtists = "none";
+                        String lastTrackAlbumName = "none";
+                        String lastTrackAlbumCoverURL = "default";
+                        String address = "none";
+
+
+                        dataSnapshot.child("profileImageUrl").getValue();
+
+                        if(dataSnapshot.child("profileImageUrl").getValue() != null)
+                            if(!dataSnapshot.child("profileImageUrl").getValue().equals("default")){
+                                profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                            }
+
+
+                        if(dataSnapshot.child("LastPlayedTrack").child("trackId").getValue() != null)
+                            if(!dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().equals("none")){
+                                lastTrackName = dataSnapshot.child("LastPlayedTrack").child("trackName").getValue().toString();
+                                lastTrackArtists = dataSnapshot.child("LastPlayedTrack").child("trackArtists").getValue().toString();
+                                lastTrackAlbumName = dataSnapshot.child("LastPlayedTrack").child("trackAlbum").getValue().toString();
+                                lastTrackAlbumCoverURL = dataSnapshot.child("LastPlayedTrack").child("trackAlbumCoverURL").getValue().toString();
+                            }
+
+                        if(dataSnapshot.child("name").getValue() != null){
+
+                            /*
+                            Mise à jour de la liste des cartes
+                             */
+                            if (dataSnapshot.child("address").getValue() != null) {
+                                address = dataSnapshot.child("address").getValue().toString();
+                            }
+                            Card item = new Card(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), lastTrackName, lastTrackArtists,lastTrackAlbumName,lastTrackAlbumCoverURL, profileImageUrl,address);
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
@@ -297,6 +293,81 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, MatchActivity.class);
         startActivity(intent);
         return;
+    }
+
+
+    /*
+    Sert à initier la vue des cartes
+     */
+    private void init(){
+
+        /*
+        Récupérer tous les utilisateurs
+         */
+        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mAuth = FirebaseAuth.getInstance();
+
+        /*
+        Récupérer l'uid de l'utilisateur connecté
+         */
+        currentUId = mAuth.getCurrentUser().getUid();
+
+        checkUserSexPreference();
+        rowItems = new ArrayList<Card>();
+        CardAdapter = new CardAdapter(this,rowItems);
+        /*
+        Initiation de la liste des cartes
+         */
+        flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
+        flingContainer.setAdapter(CardAdapter);
+
+
+        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+
+            // Supprimer le premier object de la liste
+            @Override
+            public void removeFirstObjectInAdapter() {
+
+                Log.d("LIST", "removed object!");
+                rowItems.remove(0);
+                CardAdapter.notifyDataSetChanged();
+            }
+
+            //Swip à gauche
+            @Override
+            public void onLeftCardExit(Object dataObject) {
+                Card obj = (Card) dataObject;
+                String userId = obj.getUserId();
+                usersDB.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
+            }
+
+            // Supprimer à droite
+            @Override
+            public void onRightCardExit(Object dataObject) {
+                Card obj = (Card) dataObject;
+                String userId = obj.getUserId();
+                usersDB.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
+                isConnectionMatch(userId);
+            }
+
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+            }
+
+            @Override
+            public void onScroll(float scrollProgressPercent) {
+
+            }
+        });
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        flingContainer.removeAllViewsInLayout();
+        CardAdapter.notifyDataSetChanged();
     }
 
 

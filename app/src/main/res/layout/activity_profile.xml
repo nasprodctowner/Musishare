@@ -32,6 +32,45 @@
         android:layout_marginBottom="20sp"
         android:inputType="number"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Preference"
+        android:id="@+id/radio_title"
+        />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:checkedButton="@id/radio_both"
+        android:id="@+id/radio_sexChoice">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male"
+            android:id="@+id/radio_male"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"
+            android:id="@+id/radio_female"
+            android:checked="false" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Both"
+            android:id="@+id/radio_both"
+            android:checked="false" />
+    </RadioGroup>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +79,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Coordinates here!"
+        android:hint="City here!"
         android:id="@+id/address"
         android:layout_marginBottom="10dp"/>
 

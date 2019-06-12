@@ -82,8 +82,9 @@ public class RegistrationActivity extends Activity {
             final String password = mPassword.getText().toString();
             final String name = mName.getText().toString();
 
-            // Create a new count
+            // Create a new account
             final String sex = mSexChoice.getText().toString();
+
                 mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegistrationActivity.this, task -> {
                     if(!task.isSuccessful()) {
                         Toast.makeText(RegistrationActivity.this,"Signup error",Toast.LENGTH_SHORT).show();
@@ -98,6 +99,7 @@ public class RegistrationActivity extends Activity {
                         userInformation.put("name",name);
                         userInformation.put("sex", sex);
                         userInformation.put("profileImageUrl","default");
+                        userInformation.put("sexPreference","Both");
                         currentUserDB.setValue(name);
 
                         currentUserDB.updateChildren(userInformation);
