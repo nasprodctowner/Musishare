@@ -25,6 +25,7 @@ public class LoginActivity extends Activity {
     private EditText mEmail, mPassword;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
+    private int backButtonCount = 0;
 
     private static void onClick(View view) {
     }
@@ -81,4 +82,32 @@ public class LoginActivity extends Activity {
         });
     }
 
+    /*@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(LoginActivity.this,ChooseLoginRegistrationActivity.class);
+        startActivity(intent);
+        finish();
+        return;
+    }*/
+    /**
+     * Back button listener.
+     * Will close the application if the back button pressed twice.
+     */
+    @Override
+    public void onBackPressed()
+    {
+        if(backButtonCount >= 1)
+        {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "Press the back button once again to close the application.", Toast.LENGTH_SHORT).show();
+            backButtonCount++;
+        }
+    }
 }

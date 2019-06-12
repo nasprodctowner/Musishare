@@ -79,4 +79,4 @@ Ne pas oublier d'ajouter le sha1 aussi.
 
 ## Auteurs
 * **KHATIR Nassim** - [Github](https://github.com/nassimkhatir)
-* **ABDULWAHAB Hani - [Github](https://github.com/HaniAbd)
+* **ABDULWAHAB Hani** - [Github](https://github.com/HaniAbd)
