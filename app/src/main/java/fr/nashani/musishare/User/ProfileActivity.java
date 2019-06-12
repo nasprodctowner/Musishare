@@ -413,7 +413,7 @@ public class ProfileActivity extends Activity {
      */
     public void logOutUser (View view){
         mAuth.signOut();
-        Intent intent = new Intent(ProfileActivity.this, ChooseLoginRegistrationActivity.class);
+        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
         return;

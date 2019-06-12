@@ -21,10 +21,10 @@
         <activity android:name=".Chat.ChatActivity"></activity>
         <activity android:name=".Matches.MatchActivity" />
         <activity android:name=".User.ProfileActivity" />
-        <activity android:name=".User.LoginActivity" />
+        <!--<activity android:name=".User.LoginActivity" />-->
         <activity android:name=".User.RegistrationActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".User.ChooseLoginRegistrationActivity">
+        <activity android:name=".User.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
