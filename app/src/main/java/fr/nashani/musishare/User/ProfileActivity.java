@@ -67,6 +67,10 @@ public class ProfileActivity extends Activity {
     private FusedLocationProviderClient client;
     private double latitude ,longitude;
     private RadioGroup radio_sex_choice;
+    private RadioButton radio_sex_male;
+    private RadioButton radio_sex_female;
+    private RadioButton radio_sex_both;
+
 
     private String userId, name, age, profileImageURL, userSex, locationAddress;
 
@@ -74,6 +78,7 @@ public class ProfileActivity extends Activity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ = 0;
     private FirebaseAuth mAuth ;
+    int selectId;
 
 
     @Override
@@ -89,6 +94,10 @@ public class ProfileActivity extends Activity {
         mBack = findViewById(R.id.profile_back);
         mConfirm = findViewById(R.id.profile_confirm);
         radio_sex_choice = findViewById(R.id.radio_sexChoice);
+        selectId = radio_sex_choice.getCheckedRadioButtonId();
+        radio_sex_male = findViewById(R.id.radio_male);
+        radio_sex_female = findViewById(R.id.radio_female);
+        radio_sex_both = findViewById(R.id.radio_both);
 
         // Location
         address = findViewById(R.id.address);
@@ -240,6 +249,21 @@ public class ProfileActivity extends Activity {
                     if (map.get("sex") != null){
                         userSex = map.get("sex").toString();
                     }
+                    if(map.get("sexPreference") != null){
+                        if(map.get("sexPreference").equals("Male")){
+                            radio_sex_male.setChecked(true);
+                            radio_sex_female.setChecked(false);
+                            radio_sex_both.setChecked(false);
+                        }else if(map.get("sexPreference").equals("Female")){
+                            radio_sex_female.setChecked(true);
+                            radio_sex_male.setChecked(false);
+                            radio_sex_both.setChecked(false);
+                        }else {
+                            radio_sex_both.setChecked(true);
+                            radio_sex_female.setChecked(false);
+                            radio_sex_male.setChecked(false);
+                        }
+                    }
 
 
                     if (map.get("profileImageUrl") != null){
@@ -279,7 +303,7 @@ public class ProfileActivity extends Activity {
         userInformation.put("latitude",latitude);
         userInformation.put("longitude",longitude);
         userInformation.put("address",locationAddress);
-        userInformation.put("sexToMatch",mSexChoice.getText().toString());
+        userInformation.put("sexPreference",mSexChoice.getText().toString());
 
         userDB.updateChildren(userInformation);
 

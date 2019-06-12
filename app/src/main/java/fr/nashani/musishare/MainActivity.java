@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lorentzos.flingswipe.FlingCardListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -46,7 +47,9 @@ public class MainActivity extends Activity {
     private FirebaseAuth mAuth;
 
     private String userSex;
-    private String oppositeUserSex;
+    private String userSexPreference;
+
+    SwipeFlingAdapterView flingContainer;
 
 
     @Override
@@ -54,31 +57,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        Récupérer tous les utilisateurs
-         */
-        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
+        init();
 
-        mAuth = FirebaseAuth.getInstance();
-
-        /*
-        Récupérer l'uid de l'utilisateur connecté
-         */
-        currentUId = mAuth.getCurrentUser().getUid();
-
-        checkUserSex();
-
-        rowItems = new ArrayList<Card>();
-
-        CardAdapter = new CardAdapter(this,rowItems);
-
-
-        /*
-        Initiation de la liste des cartes
-         */
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
-
-        flingContainer.setAdapter(CardAdapter);
 
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
 
@@ -158,7 +138,7 @@ public class MainActivity extends Activity {
     /**
      * Check le user pou savoir s'il est un homme ou une femme
      */
-    public void checkUserSex(){
+    public void checkUserSexPreference(){
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userDB = usersDB.child(user.getUid());
@@ -168,15 +148,15 @@ public class MainActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.exists()){
-                        if(dataSnapshot.child("sexToMatch").getValue() != null){
-                            userSex = dataSnapshot.child("sexToMatch").getValue().toString();
+                        if(dataSnapshot.child("sexPreference").getValue() != null){
+                            userSex = dataSnapshot.child("sexPreference").getValue().toString();
 
                             switch (userSex){
-                                case "Male" : oppositeUserSex = "Male";
+                                case "Male" : userSexPreference = "Male";
                                     break;
-                                case "Female" : oppositeUserSex = "Female";
+                                case "Female" : userSexPreference = "Female";
                                     break;
-                                case "Both" : oppositeUserSex = "Both";
+                                case "Both" : userSexPreference = "Both";
                                     break;
                             }
                             getOppositeSexUsers();
@@ -204,9 +184,10 @@ public class MainActivity extends Activity {
 
                 if(dataSnapshot.child("sex").getValue() != null){
                     if(dataSnapshot.exists()
-                            && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
-                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)
-                            && dataSnapshot.child("sex").getValue().toString().equals(oppositeUserSex)){
+                            && (!dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId))
+                            && dataSnapshot.child("sex").getValue().toString().equals(userSexPreference)
+                            && !dataSnapshot.getKey().equals(currentUId)){
 
 
                         /*
@@ -245,13 +226,11 @@ public class MainActivity extends Activity {
                             CardAdapter.notifyDataSetChanged();
                         }
 
-                    }else if(dataSnapshot.exists()
+                    }else if(userSexPreference.equals("Both")
                             && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
                             && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)
-                         ){
-
-
-                        /*
+                            && !dataSnapshot.getKey().equals(currentUId)) {
+                                             /*
                         Setter des valeurs par défaut
                          */
                         String profileImageUrl = "default";
@@ -286,7 +265,9 @@ public class MainActivity extends Activity {
                             rowItems.add(item);
                             CardAdapter.notifyDataSetChanged();
                         }
-                }}
+
+                    }
+                }
             }
 
             @Override
@@ -335,6 +316,47 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, MatchActivity.class);
         startActivity(intent);
         return;
+    }
+
+
+    private void init(){
+
+        /*
+        Récupérer tous les utilisateurs
+         */
+        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mAuth = FirebaseAuth.getInstance();
+
+        /*
+        Récupérer l'uid de l'utilisateur connecté
+         */
+        currentUId = mAuth.getCurrentUser().getUid();
+
+        checkUserSexPreference();
+        rowItems = new ArrayList<Card>();
+        CardAdapter = new CardAdapter(this,rowItems);
+        /*
+        Initiation de la liste des cartes
+         */
+        flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
+        flingContainer.setAdapter(CardAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+
+        flingContainer.removeAllViewsInLayout();
+        CardAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        flingContainer.removeAllViewsInLayout();
+        CardAdapter.notifyDataSetChanged();
     }
 
 
