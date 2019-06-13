@@ -80,3 +80,7 @@ Ne pas oublier d'ajouter le sha1 aussi.
 ## Auteurs
 * **KHATIR Nassim** - [Github](https://github.com/nassimkhatir)
 * **ABDULWAHAB Hani** - [Github](https://github.com/HaniAbd)
+
+### Présentation : https://docs.google.com/presentation/d/1EEP2vuliDexSFyazzCFfgvsrFX54pu6FCTCtfVGqEWk/edit?usp=sharing
+
+### Trello : https://trello.com/b/IV5iAkp8/musishare
