@@ -4,7 +4,7 @@
 
 ## Qu'est ce que c'est ?
 
-Musishare est une application de rencontre qui te permet de savoir ce que 
+Musishare est une application de rencontres musicales !
 
 ## Fonctionnalités 
 
