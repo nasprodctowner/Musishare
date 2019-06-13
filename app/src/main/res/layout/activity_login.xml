@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".User.LoginActivity"
-    android:background="@drawable/bg_login"
+    android:background="@drawable/card_background_color"
     android:orientation="vertical">
 
 
@@ -14,75 +14,50 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:layout_marginTop="50dp"
         android:src="@drawable/login_logo"
         tools:src="@drawable/login_logo" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="150dp"
-        android:orientation="horizontal">
+        android:layout_gravity="center_horizontal"
+
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/text_email_login"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
             android:drawableLeft="@drawable/ic_action_user"
             android:hint="EMAIL"
             android:padding="5dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="#FFFFFF"
+            android:textColor="@android:color/black"
+            android:textColorHint="#000000"
+            android:layout_marginBottom="5dp"
             android:textSize="14dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/text_password_login"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
             android:drawableLeft="@drawable/ic_action_password"
             android:hint="PASSWORD"
             android:inputType="textPassword"
             android:padding="5dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="#FFFFFF"
+            android:textColor="@android:color/black"
+            android:textColorHint="#000000"
             android:textSize="14dp" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_submit_login"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:text="login"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
+            android:textColorHint="#000000"
             android:theme="@style/Widget.AppCompat.Button" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textView_register"
@@ -90,6 +65,9 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:text="Don't have an account?"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/black"
+            android:textColorHint="#000000" />
+
     </LinearLayout>
+
     </LinearLayout>

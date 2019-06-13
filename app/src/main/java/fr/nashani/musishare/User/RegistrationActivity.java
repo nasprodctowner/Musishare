@@ -100,6 +100,7 @@ public class RegistrationActivity extends Activity {
                         userInformation.put("sex", sex);
                         userInformation.put("profileImageUrl","default");
                         userInformation.put("sexPreference","Both");
+                        userInformation.put("address","none");
                         currentUserDB.setValue(name);
 
                         currentUserDB.updateChildren(userInformation);

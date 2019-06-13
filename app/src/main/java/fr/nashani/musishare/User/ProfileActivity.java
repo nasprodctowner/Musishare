@@ -72,7 +72,7 @@ public class ProfileActivity extends Activity {
     private RadioButton radio_sex_both;
 
 
-    private String userId, name, age, profileImageURL, userSex, locationAddress;
+    private String userId, name, age, profileImageURL, locationAddress, addressProfile;
 
     private Uri resultUri;
 
@@ -246,9 +246,6 @@ public class ProfileActivity extends Activity {
                         mAgeField.setText(age);
                     }
 
-                    if (map.get("sex") != null){
-                        userSex = map.get("sex").toString();
-                    }
                     if(map.get("sexPreference") != null){
                         if(map.get("sexPreference").equals("Male")){
                             radio_sex_male.setChecked(true);
@@ -263,6 +260,22 @@ public class ProfileActivity extends Activity {
                             radio_sex_female.setChecked(false);
                             radio_sex_male.setChecked(false);
                         }
+                    }
+
+                    if (map.get("address") != null ){
+
+                        addressProfile = map.get("address").toString();
+
+                        switch (addressProfile){
+                            case "none" : address.setText("none");
+
+                                break;
+
+                            default:  address.setText(addressProfile);
+                                break;
+
+                        }
+
                     }
 
 
